@@ -81,6 +81,10 @@
 (setq user-full-name "Oliver Dunkl")
 (setq user-mail-address "oliver.dunkl@gmail.com")
 
+;; set default browser
+(setq browse-url-browser-function 'browse-url-generic)
+(setq browse-url-generic-program "google-chrome-stable")
+
 ;; helm configuration
 (use-package helm
   :ensure helm
