@@ -9,7 +9,6 @@
 ;; - fix functions for changing cursor color if abbrev/yasnippet available
 ;; - working with dired
 ;; - working with tramp
-;; - server-mode
 ;; - use fill-column-indicator? (http://www.emacswiki.org/emacs/FillColumnIndicator)
 ;; - using smart-mode-line?
 
@@ -21,6 +20,7 @@
 (prefer-coding-system 'utf-8)	;; utf-8 as coding system
 (desktop-save-mode t)		;; save desktop configuration
 (show-paren-mode t)             ;; show fitting braces
+(server-mode t)                 ;; start emacs as server
 
 ;; load all emacs-lisp files from given directory
 (add-to-list 'load-path "~/.emacs.d/elisp/")
