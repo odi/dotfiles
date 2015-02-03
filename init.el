@@ -2,8 +2,6 @@
 ;; created: 2014-02-02
 
 ;; TODO:
-;; - add tags -unread +send to send messages
-;; - XWindow notifications
 ;; - emms configuration
 ;; - org-mode configuration
 ;; - projectile
@@ -165,6 +163,7 @@
   :config
   (progn
     (setq notmuch-search-oldest-first nil)
+    (setq message-kill-buffer-on-exit t)
     ;; define some faces
     (setq notmuch-search-line-faces '(("unread" . (:weight 'normal))))
     (setq notmuch-tag-formats '(("unread"
@@ -197,6 +196,19 @@
 (use-package magit
   :ensure magit
   :bind (("C-c m" . magit-status)))
+
+;; bbdb
+(use-package bbdb
+  :ensure bbdb
+  :init
+  (progn
+    (bbdb-initialize))
+  :config
+  (progn
+    (setq bbdb-complete-mail-allow-cycling t)
+    (setq bbdb-pop-up-window-size 10)
+    (setq bbdb-pop-up-layout nil)
+    (setq bbdb-phone-style nil)))
 
 ;; connect to freenode with username, password from ~/.authinfo
 (defun odi/erc-connect ()
