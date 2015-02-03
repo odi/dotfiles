@@ -2,7 +2,7 @@
 ;; created: 2014-02-02
 
 ;; TODO:
-;; - notmuch configuration
+;; - add tags -unread +send to send messages
 ;; - XWindow notifications
 ;; - emms configuration
 ;; - org-mode configuration
@@ -75,6 +75,12 @@
 (setq version-control t)
 (setq vc-make-backup-files t)
 (setq auto-save-file-name-transforms '((".*" "~/.emacs.d/autosaves/\\1" t)))
+
+;; set some useful settings for email
+(setq message-send-mail-function 'sendmail-send-it)
+(setq mail-host-address "mail.io")
+(setq user-full-name "Oliver Dunkl")
+(setq user-mail-address "oliver.dunkl@gmail.com")
 
 ;; helm configuration
 (use-package helm
