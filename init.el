@@ -32,7 +32,7 @@
 ;; see: http://xahlee.blogspot.co.at/2012/06/emacs-24-package-system-problems.html
 (add-to-list 'load-path "~/.emacs.d/elpa/use-package-20150118.722")
 (add-to-list 'load-path "~/.emacs.d/elpa/bind-key-20150102.1532")
-(add-to-list 'load-path "~/.emacs.d/elpa/helm-20150201.2142")
+(add-to-list 'load-path "~/.emacs.d/elpa/helm-20150203.36")
 (add-to-list 'load-path "~/.emacs.d/elpa/helm-swoop-20150201.2203")
 
 ;; ## Package management
@@ -152,7 +152,10 @@
     (setq jabber-use-global-history nil)
     (setq jabber-history-dir "~/.emacs.d/jabber-history")
     (setq jabber-backlog-number 100)
-    (setq jabber-backlog-days 60)))
+    (setq jabber-backlog-days 60)
+    (setq jabber-alert-message-hooks '(jabber-message-echo
+				       jabber-message-scroll
+				       odi/xmonad-notify))))
 
 ;; notmuch
 (use-package notmuch
@@ -232,3 +235,19 @@ first position of the line."
     (goto-char here)))
 
 (bind-key "M-L" 'odi/mark-line)
+
+;; define a function which set's the urgent flag
+;; from: http://www.emacswiki.org/emacs/JabberEl
+(defun odi/x-urgency-hint (frame arg &optional source)
+  (let* ((wm-hints (append (x-window-property
+			    "WM_HINTS" frame "WM_HINTS" source nil t) nil))
+	 (flags (car wm-hints)))
+    (setcar wm-hints
+	    (if arg
+		(logior flags #x100)
+	      (logand flags (lognot #x100))))
+    (x-change-window-property "WM_HINTS" wm-hints frame "WM_HINTS" 32 t)))
+
+;; wrapper function for jabber-notification
+(defun odi/xmonad-notify (&optional from buffer text proposed-alert)
+  (odi/x-urgency-hint (selected-frame) t))
