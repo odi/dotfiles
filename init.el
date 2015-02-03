@@ -6,7 +6,6 @@
 ;; - XWindow notifications
 ;; - emms configuration
 ;; - org-mode configuration
-;; - magit
 ;; - projectile
 ;; - use yasnippet
 ;; - fix functions for changing cursor color if abbrev/yasnippet available
@@ -186,6 +185,11 @@
 	(notmuch-search-next-thread)))
     (bind-key "C-c n u" '(lambda () (interactive) (notmuch-search "tag:unread"))))
   :bind (("C-c n s" . notmuch-search)))
+
+;; magit
+(use-package magit
+  :ensure magit
+  :bind (("C-c m" . magit-status)))
 
 ;; connect to freenode with username, password from ~/.authinfo
 (defun odi/erc-connect ()
