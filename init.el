@@ -20,6 +20,7 @@
 (desktop-save-mode t)		;; save desktop configuration
 (show-paren-mode t)             ;; show fitting braces
 (server-mode t)                 ;; start emacs as server
+(mouse-wheel-mode -1)           ;; disable mouse scrolling
 
 ;; load all emacs-lisp files from given directory
 (add-to-list 'load-path "~/.emacs.d/elisp/")
