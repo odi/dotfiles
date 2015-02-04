@@ -189,6 +189,10 @@
 	(interactive)
 	(notmuch-search-tag '("+killed" "-unread"))
 	(notmuch-search-next-thread)))
+    ;; jump to next link
+    (define-key notmuch-show-mode-map (kbd "C-c C-l") 'org-next-link)
+    ;; open link at point in default-browser
+    (define-key notmuch-show-mode-map (kbd "C-c C-o") 'browse-url-at-point)
     (bind-key "C-c n u" '(lambda () (interactive) (notmuch-search "tag:unread"))))
   :bind (("C-c n s" . notmuch-search)))
 
