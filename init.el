@@ -20,6 +20,7 @@
 (desktop-save-mode t)		;; save desktop configuration
 (show-paren-mode t)             ;; show fitting braces
 (server-mode t)                 ;; start emacs as server
+(ido-mode t)                    ;; use ido instead of helm for finding files
 
 ;; load all emacs-lisp files from given directory
 (add-to-list 'load-path "~/.emacs.d/elisp/")
