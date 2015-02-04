@@ -214,6 +214,51 @@
     (setq bbdb-pop-up-layout nil)
     (setq bbdb-phone-style nil)))
 
+;; org-mode
+(setq org-directory "~/wiki")
+(setq calendar-week-start-day 1)
+
+;; org-keybindings
+(bind-key "C-c a" 'org-agenda)
+(bind-key "C-c c" 'org-capture)
+
+;; org-agenda
+(setq org-agenda-files
+      '("~/wiki/org/work/TSA.org"      ;; primary employer
+	;; TODO move Links to org/Links.org
+	"~/wiki/Links.org"             ;; collection of links
+	"~/wiki/org/Anniversaries.org"
+	"~/wiki/org/Diary.org"))
+(setq org-agenda-custom-commands
+      '(("L" . "Links")
+	("Ll" "Links for reading"
+	 ((todo "TODO"
+		((org-agenda-files '("~/wiki/Links.org"))
+		 (org-agenda-overriding-header "Links for reading")))))))
+
+;; org-capture
+(setq org-capture-templates
+      '(("c" "Calendar entries") ;; all calendar entries
+	("ca" "Calendar entry in `Private'"
+	 entry (file+headline "~/wiki/org/Diary.org" "Private")
+	 "** %?\n")
+	("cb" "Calendar entry in `Work'"
+	 entry (file+headline "~/wiki/org/Diary.org" "Work")
+	 "** %?\n")
+	("cc" "Calendar entry in `Sandra'"
+	 entry (file+headline "~/wiki/org/Diary.org" "Sandra")
+	 "** %?\n")
+	("cd" "Calendar entry in `Family'"
+	 entry (file+headline "~/wiki/org/Diary.org" "Family")
+	 "** %?\n")
+	("ce" "Calendar entry in `Scouts'"
+	 entry (file+headline "~/wiki/org/Diary.org" "Scouts")
+	 "** %?\n")
+	("n" "Quicknote"
+	 ;; TODO: move Notes.org to org/Notes.org
+	 entry (file "~/wiki/notes/Notes.org")
+	 "** TODO %?\n  :PROPERTIES:\n :CREATED: %^U\n  :END:")))
+
 ;; connect to freenode with username, password from ~/.authinfo
 (defun odi/erc-connect ()
   (interactive)
