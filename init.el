@@ -3,7 +3,6 @@
 
 ;; TODO:
 ;; - emms configuration
-;; - org-mode configuration
 ;; - projectile
 ;; - use yasnippet
 ;; - fix functions for changing cursor color if abbrev/yasnippet available
@@ -214,6 +213,11 @@
     (setq bbdb-pop-up-layout nil)
     (setq bbdb-phone-style nil)))
 
+;; switch-window
+(use-package switch-window
+  :ensure switch-window
+  :bind (("C-," . switch-window)))
+
 ;; org-mode
 (setq org-directory "~/wiki")
 (setq calendar-week-start-day 1)
@@ -312,3 +316,4 @@ first position of the line."
 ;; wrapper function for jabber-notification
 (defun odi/xmonad-notify (&optional from buffer text proposed-alert)
   (odi/x-urgency-hint (selected-frame) t))
+
