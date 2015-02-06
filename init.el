@@ -74,7 +74,7 @@
 (setq auto-save-file-name-transforms '((".*" "~/.emacs.d/autosaves/\\1" t)))
 
 ;; set some useful settings for email
-(setq message-send-mail-function 'sendmail-send-it)
+(setq message-send-mail-function 'message-send-mail-with-sendmail)
 (setq mail-host-address "mail.io")
 (setq user-full-name "Oliver Dunkl")
 (setq user-mail-address "oliver.dunkl@gmail.com")
@@ -222,6 +222,8 @@
 ;; org-mode
 (setq org-directory "~/wiki")
 (setq calendar-week-start-day 1)
+(setq org-time-clocksum-format
+      '(:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t))
 
 ;; org-keybindings
 (bind-key "C-c a" 'org-agenda)
