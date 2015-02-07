@@ -221,6 +221,19 @@
   :ensure switch-window
   :bind (("C-," . switch-window)))
 
+;; projectile
+(use-package projectile
+  :ensure projectile
+  :config
+  (progn
+    (projectile-global-mode t)
+    (setq projectile-indexing-method 'git)
+    (setq projectile-switch-project-action 'projectile-find-file)))
+
+;; helm-projectile
+(use-package helm-projectile
+  :ensure helm-projectile)
+
 ;; org-mode
 (setq org-directory "~/wiki")
 (setq calendar-week-start-day 1)
