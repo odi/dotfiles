@@ -84,6 +84,7 @@
 (setq browse-url-generic-program "google-chrome-stable")
 
 ;; helm configuration
+;; howto write a helm-extension: http://wikemacs.org/wiki/How_to_write_helm_extensions
 (use-package helm
   :ensure helm
   :init
@@ -112,8 +113,9 @@
 ;; Haskell-Mode
 (use-package haskell-mode
   :init
-  (add-hook 'haskell-mode-hook (lambda ()
-				(turn-on-haskell-indentation))))
+  (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+  (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
+  (add-hook 'haskell-mode-hook 'turn-on-haskell-decl-scan))
 
 ;; ace-jump-mode
 (use-package ace-jump-mode
