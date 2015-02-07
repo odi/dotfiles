@@ -95,7 +95,16 @@
     (setq helm-input-idle-delay 0.01)
     (setq helm-quick-update t)
     (setq helm-ff-skip-boring-files t)
-    (helm-mode t))
+    (helm-mode t)
+    (setq helm-completing-read-handlers-alist
+	  '((describe-function . helm-completing-read-symbols)
+	    (describe-variable . helm-completing-read-symbols)
+	    (debug-on-entry . helm-completing-read-symbols)
+	    (find-function . helm-completing-read-symbols)
+	    (find-tag . helm-completing-read-with-cands-in-buffer)
+	    (ffap-alternate-file)
+	    (tmm-menubar)
+	    (find-file . ido))))
   :bind (("M-x"     . helm-M-x) ;; default: execute-extended-command
 	 ("C-x b"   . helm-buffers-list)
 	 ("C-c h i" . helm-imenu)
@@ -227,8 +236,7 @@
   :config
   (progn
     (projectile-global-mode t)
-    (setq projectile-indexing-method 'git)
-    (setq projectile-switch-project-action 'projectile-find-file)))
+    (setq projectile-indexing-method 'alien)))
 
 ;; helm-projectile
 (use-package helm-projectile
@@ -334,4 +342,3 @@ first position of the line."
 ;; wrapper function for jabber-notification
 (defun odi/xmonad-notify (&optional from buffer text proposed-alert)
   (odi/x-urgency-hint (selected-frame) t))
-
