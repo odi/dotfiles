@@ -3,7 +3,6 @@
 
 ;; TODO:
 ;; - emms configuration
-;; - projectile
 ;; - use yasnippet
 ;; - fix functions for changing cursor color if abbrev/yasnippet available
 ;; - working with dired
@@ -96,15 +95,7 @@
     (setq helm-quick-update t)
     (setq helm-ff-skip-boring-files t)
     (helm-mode t)
-    (setq helm-completing-read-handlers-alist
-	  '((describe-function . helm-completing-read-symbols)
-	    (describe-variable . helm-completing-read-symbols)
-	    (debug-on-entry . helm-completing-read-symbols)
-	    (find-function . helm-completing-read-symbols)
-	    (find-tag . helm-completing-read-with-cands-in-buffer)
-	    (ffap-alternate-file)
-	    (tmm-menubar)
-	    (find-file . ido))))
+    (add-to-list 'helm-completing-read-handlers-alist '(find-file . ido)))
   :bind (("M-x"     . helm-M-x) ;; default: execute-extended-command
 	 ("C-x b"   . helm-buffers-list)
 	 ("C-c h i" . helm-imenu)
