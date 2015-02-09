@@ -31,6 +31,14 @@
 (add-to-list 'load-path "~/.emacs.d/elpa/bind-key-20150102.1532")
 (add-to-list 'load-path "~/.emacs.d/elpa/helm-20150203.36")
 (add-to-list 'load-path "~/.emacs.d/elpa/helm-swoop-20150201.2203")
+(add-to-list 'load-path "~/.emacs.d/elpa/haskell-mode-20150202.632")
+(add-to-list 'load-path "~/.emacs.d/elpa/jabber-20150127.745")
+(add-to-list 'load-path "~/.emacs.d/elpa/bbdb-20140830.2031")
+(add-to-list 'load-path "~/.emacs.d/elpa/projectile-20150201.1134")
+(add-to-list 'load-path "~/.emacs.d/elpa/helm-projectile-20150204.107")
+(add-to-list 'load-path "~/.emacs.d/elpa/dash-20141220.1452")
+(add-to-list 'load-path "~/.emacs.d/elpa/auto-complete-20150201.150")
+(add-to-list 'load-path "~/.emacs.d/elpa/popup-20150116.1223")
 
 ;; ## Package management
 ;; initialize package-management
@@ -232,6 +240,17 @@
 ;; helm-projectile
 (use-package helm-projectile
   :ensure helm-projectile)
+
+;; auto-complete
+(use-package auto-complete
+  :ensure auto-complete
+  :idle (ac-config-default)
+  :config
+  (progn
+    (setq ac-modes nil) ;; delete default values and add only used modes
+    (add-to-list 'ac-modes 'emacs-lisp-mode)
+    (add-to-list 'ac-modes 'lisp-mode)
+    (add-to-list 'ac-modes 'lisp-interaction-mode)))
 
 ;; org-mode
 (setq org-directory "~/wiki")
