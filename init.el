@@ -39,6 +39,7 @@
 (add-to-list 'load-path "~/.emacs.d/elpa/dash-20141220.1452")
 (add-to-list 'load-path "~/.emacs.d/elpa/auto-complete-20150201.150")
 (add-to-list 'load-path "~/.emacs.d/elpa/popup-20150116.1223")
+(add-to-list 'load-path "~/.emacs.d/elpa/paradox-20150208.1211")
 
 ;; ## Package management
 ;; initialize package-management
@@ -74,23 +75,26 @@
 ;; for lazy people like my y instead of yes and n instead of no
 (defalias 'yes-or-no-p 'y-or-n-p)
 
-;; define backup directory; instead of $HOME
+;; load secrets file
+(load "~/.emacs.d/elisp/secrets.el" t)
+
+;; ## backup and autosave
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 (setq version-control t)
 (setq vc-make-backup-files t)
 (setq auto-save-file-name-transforms '((".*" "~/.emacs.d/autosaves/\\1" t)))
 
-;; set some useful settings for email
+;; ## email
 (setq message-send-mail-function 'message-send-mail-with-sendmail)
 (setq mail-host-address "mail.io")
 (setq user-full-name "Oliver Dunkl")
 (setq user-mail-address "oliver.dunkl@gmail.com")
 
-;; set default browser
+;; ## default browser
 (setq browse-url-browser-function 'browse-url-generic)
 (setq browse-url-generic-program "google-chrome-stable")
 
-;; helm configuration
+;; ## helm
 ;; howto write a helm-extension: http://wikemacs.org/wiki/How_to_write_helm_extensions
 (use-package helm
   :ensure helm
@@ -110,7 +114,8 @@
 	 ("C-c h o" . helm-occur)
 	 ("M-y"     . helm-show-kill-ring)))
 
-;; helm-Swoop
+;; ## helm-swoop
+;; https://github.com/ShingoFukuyama/helm-swoop
 (use-package helm-swoop
   :ensure helm-swoop
   :init
@@ -118,18 +123,19 @@
     (require 'helm-swoop))
   :bind (("C-c h s" . helm-swoop)))
 
-;; Haskell-Mode
+;; ## haskell-mode
+;; https://github.com/haskell/haskell-mode
 (use-package haskell-mode
   :init
   (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
   (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
   (add-hook 'haskell-mode-hook 'turn-on-haskell-decl-scan))
 
-;; ace-jump-mode
+;; ## ace-jump-mode
 (use-package ace-jump-mode
   :bind (("C-c 0" . ace-jump-mode)))
 
-;; erc
+;; ## erc
 (use-package erc
   :init
   (progn
@@ -144,7 +150,7 @@
     (setq erc-autojoin-channels-alist '(("freenode.net"
 					 "#nixos")))))
 
-;; jabber
+;; ## jabber
 (use-package jabber
   :init
   (progn
@@ -165,7 +171,7 @@
 				       jabber-message-scroll
 				       odi/xmonad-notify))))
 
-;; notmuch
+;; ## notmuch
 (use-package notmuch
   :init
   (progn
@@ -206,12 +212,12 @@
     (bind-key "C-c n u" '(lambda () (interactive) (notmuch-search "tag:unread"))))
   :bind (("C-c n s" . notmuch-search)))
 
-;; magit
+;; ## magit
 (use-package magit
   :ensure magit
   :bind (("C-c m" . magit-status)))
 
-;; bbdb
+;; ## bbdb
 (use-package bbdb
   :ensure bbdb
   :init
@@ -224,12 +230,12 @@
     (setq bbdb-pop-up-layout nil)
     (setq bbdb-phone-style nil)))
 
-;; switch-window
+;; ## switch-window
 (use-package switch-window
   :ensure switch-window
   :bind (("C-," . switch-window)))
 
-;; projectile
+;; ## projectile
 (use-package projectile
   :ensure projectile
   :config
@@ -237,11 +243,11 @@
     (projectile-global-mode t)
     (setq projectile-indexing-method 'alien)))
 
-;; helm-projectile
+;; ## helm-projectile
 (use-package helm-projectile
   :ensure helm-projectile)
 
-;; auto-complete
+;; ## auto-complete
 (use-package auto-complete
   :ensure auto-complete
   :idle (ac-config-default)
@@ -252,17 +258,17 @@
     (add-to-list 'ac-modes 'lisp-mode)
     (add-to-list 'ac-modes 'lisp-interaction-mode)))
 
-;; org-mode
+;; ## org-mode
 (setq org-directory "~/wiki")
 (setq calendar-week-start-day 1)
 (setq org-time-clocksum-format
       '(:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t))
 
-;; org-keybindings
+;; ## org-mode key bindings
 (bind-key "C-c a" 'org-agenda)
 (bind-key "C-c c" 'org-capture)
 
-;; org-agenda
+;; ## org-mode agenda
 (setq org-agenda-files
       '("~/wiki/org/work/TSA.org"      ;; primary employer
 	;; TODO move Links to org/Links.org
@@ -276,7 +282,7 @@
 		((org-agenda-files '("~/wiki/Links.org"))
 		 (org-agenda-overriding-header "Links for reading")))))))
 
-;; org-capture
+;; ## org-mode capture
 (setq org-capture-templates
       '(("c" "Calendar entries") ;; all calendar entries
 	("ca" "Calendar entry in `Private'"
@@ -298,6 +304,11 @@
 	 ;; TODO: move Notes.org to org/Notes.org
 	 entry (file "~/wiki/notes/Notes.org")
 	 "** TODO %?\n  :PROPERTIES:\n :CREATED: %^U\n  :END:")))
+
+;; ## paradox
+;; https://github.com/Bruce-Connor/paradox/
+(use-package paradox
+  :ensure paradox)
 
 ;; connect to freenode with username, password from ~/.authinfo
 (defun odi/erc-connect ()
