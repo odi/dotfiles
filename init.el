@@ -234,11 +234,10 @@
     (setq bbdb-phone-style nil)))
 
 ;; ## switch-window
+;; - deactivated C-, because of conflicting with org-mode
+;;   and using key-chord 'ow'
 (use-package switch-window
-  :ensure switch-window
-  ;; TODO: bind it to another keyboard-shortcut because
-  ;; of org-cycle-agenda-files is bound to that in org-mode
-  :bind (("C-," . switch-window)))
+  :ensure switch-window)
 
 ;; ## projectile
 (use-package projectile
@@ -314,6 +313,15 @@
 ;; https://github.com/Bruce-Connor/paradox/
 (use-package paradox
   :ensure paradox)
+
+;; ## key-chord
+;; TODO: test key-chords if they conflicts with my typings
+(use-package key-chord
+  :ensure key-chord
+  :config
+  (progn
+    (key-chord-mode t)
+    (key-chord-define-global "ww" 'other-window)))
 
 ;; connect to freenode with username, password from ~/.authinfo
 (defun odi/erc-connect ()
