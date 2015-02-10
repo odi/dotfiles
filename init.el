@@ -21,6 +21,7 @@
 (server-mode t)                 ;; start emacs as server
 (mouse-wheel-mode -1)           ;; disable mouse scrolling
 (winner-mode t)                 ;; activate winner-mode
+(eldoc-mode t)                  ;; activate emacs-lisp-documentation
 
 ;; load all emacs-lisp files from given directory
 (add-to-list 'load-path "~/.emacs.d/elisp/")
@@ -96,7 +97,8 @@
 (setq browse-url-generic-program "google-chrome-stable")
 
 ;; ## helm
-;; howto write a helm-extension: http://wikemacs.org/wiki/How_to_write_helm_extensions
+;; http://wikemacs.org/wiki/How_to_write_helm_extensions
+;; http://kitchingroup.cheme.cmu.edu/blog/2015/01/24/Anatomy-of-a-helm-source/
 (use-package helm
   :ensure helm
   :init
@@ -234,6 +236,8 @@
 ;; ## switch-window
 (use-package switch-window
   :ensure switch-window
+  ;; TODO: bind it to another keyboard-shortcut because
+  ;; of org-cycle-agenda-files is bound to that in org-mode
   :bind (("C-," . switch-window)))
 
 ;; ## projectile
