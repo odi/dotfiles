@@ -9,6 +9,7 @@
 ;; - working with tramp
 ;; - use fill-column-indicator? (http://www.emacswiki.org/emacs/FillColumnIndicator)
 ;; - using smart-mode-line?
+;; - flyspell for emails?
 
 ;; ## Basic configurations
 (tool-bar-mode -1)		;; disable tool-bar
@@ -42,6 +43,8 @@
 (add-to-list 'load-path "~/.emacs.d/elpa/auto-complete-20150201.150")
 (add-to-list 'load-path "~/.emacs.d/elpa/popup-20150116.1223")
 (add-to-list 'load-path "~/.emacs.d/elpa/paradox-20150208.1211")
+(add-to-list 'load-path "~/.emacs.d/elpa/switch-window-20150114.215")
+(add-to-list 'load-path "~/.emacs.d/elpa/key-chord-20140929.2246")
 
 ;; ## Package management
 ;; initialize package-management
@@ -93,8 +96,11 @@
 (setq user-mail-address "oliver.dunkl@gmail.com")
 
 ;; ## default browser
+;; It uses a shell script which loads a new firefox-window with
+;; the url under the point.
+;; `firefox-nw.sh' just opens an url in a new window.
 (setq browse-url-browser-function 'browse-url-generic)
-(setq browse-url-generic-program "google-chrome-stable")
+(setq browse-url-generic-program "firefox-nw.sh")
 
 ;; ## helm
 ;; http://wikemacs.org/wiki/How_to_write_helm_extensions
@@ -267,6 +273,8 @@
 (setq calendar-week-start-day 1)
 (setq org-time-clocksum-format
       '(:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t))
+(setq org-todo-keywords
+      '((sequence "TODO" "NEXT" "|" "DONE" "CANC")))
 
 ;; ## org-mode key bindings
 (bind-key "C-c a" 'org-agenda)
