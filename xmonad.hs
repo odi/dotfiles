@@ -1,24 +1,25 @@
 
 import XMonad
-import XMonad.Prompt
 
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.UrgencyHook
+
+-- imported from xmonad-ext
+import XMonad.Libs.Completion
+
+import XMonad.Prompt
+import XMonad.Prompt.XMonad
+import XMonad.Prompt.Shell
 
 import XMonad.Util.Font
 import XMonad.Util.Loggers
 import XMonad.Util.Run
 import XMonad.Util.Replace
 
+import qualified Data.Map as M
 import Data.Maybe (fromMaybe)
 import GHC.IO.Handle.Types
-
-import Data.Traversable (traverse)
-import XMonad.Util.NamedWindows (getName)
-import qualified XMonad.StackSet as W
-import Data.Maybe (maybeToList)
-import Data.List ((\\))
 
 -- some default configurations
 terminal'     = "xterm"
@@ -54,8 +55,8 @@ defaultFont size weight =
          ]
 
 -- configuration for the shell-prompt
-shellPrompt :: XPConfig
-shellPrompt = defaultXPConfig
+promptConf :: XPConfig
+promptConf = defaultXPConfig
   { font              = defaultFont 15 "normal"
   , bgColor           = cBlack
   , fgColor           = cWhite
@@ -67,12 +68,6 @@ shellPrompt = defaultXPConfig
   , height            = 24
   , defaultText       = []
   }
-
-logTitles :: X (Maybe String)
-logTitles = withWindowSet $
-            fmap (Just . unwords)
-            . traverse (fmap show . getName)
-            . (\ws -> W.index ws \\ maybeToList (W.peek ws))
 
 -- Logger for notmuch counting queries.
 logMailNotmuch :: String -> X (Maybe String)
@@ -114,6 +109,7 @@ logHook' lh rh =
       , ppTitle   = dzenColor cGrey cYellow . shorten 70
       , ppCurrent = dzenColor cYellow "" . wrap "[" "]"
       , ppLayout  = dzenColor cBlue ""
+      , ppUrgent  = dzenColor cWhite cRed . wrap "!" "!"
       , ppSep     = " • "
       }
     rightPP rh = defaultPP    -- configuration of right logHook
@@ -133,6 +129,25 @@ logHook' lh rh =
       }
 
 layoutHook' = avoidStruts $ layoutHook defaultConfig
+
+-- use default keys and overwrite it with keys_
+keys' :: XConfig Layout -> M.Map (KeyMask, KeySym) (X ())
+keys' = \c -> keys_ c `M.union` keys defaultConfig c
+
+keys_ :: XConfig Layout -> M.Map (KeyMask, KeySym) (X ())
+keys_ (XConfig {modMask = modm}) = M.fromList $
+  [ ((modm, xK_Return), spawn terminal')
+  , ((modm, xK_g), windowPromptGoto' promptConf)
+  , ((modm, xK_b), windowPromptBring' promptConf)
+    -- dirty hack of switching to firefox/vimperator windows
+  , ((modm, xK_v), windowPromptGotoPropClass "vimperator" promptConf)
+  , ((modm, xK_u), sendMessage $ ToggleStrut U)
+  , ((modm .|. shiftMask, xK_l), spawn "lock.sh")
+  , ((modm, xK_x), xmonadPrompt promptConf)
+  , ((modm, xK_p), shellPrompt promptConf)
+  , ((modm, xK_BackSpace), focusUrgent)
+  , ((modm, xK_q), spawn "killall dzen2" >> restart "xmonad" True)
+  ]
 
 dzenBar :: Int -> String -> Int -> String
 dzenBar w a x =
@@ -158,4 +173,5 @@ main = do
     , focusedBorderColor = focusedColor'
     , logHook            = logHook' lh rh
     , layoutHook         = layoutHook'
+    , keys               = keys'
     }
