@@ -47,7 +47,6 @@ cLGrey   = "#c0c0c0"
 -- http://xmonad.org/xmonad-docs/xmonad-contrib/XMonad-Util-Font.html
 defaultFont :: Int -> String -> String
 defaultFont size weight =
---  concat [ "xft:DejaVu Sans Mono:pixelsize="
   concat [ "xft:monospace:pixelsize="
          , show size
          , ":weight="
@@ -74,12 +73,21 @@ logMailNotmuch :: String -> X (Maybe String)
 logMailNotmuch query = logCmd ("notmuch count " ++ query)
 
 -- Logger for network interfaces.
--- TODO: show ESSID if interface is wlp2s0
 logActiveIF :: X (Maybe String)
 logActiveIF = do
-  nif <- logCmd ("ip a | grep \"state UP\" | awk '{print $2}' | tr -d :")
-  essid <- logCmd ("iwconfig wlp2s0 | grep ESSID | awk -F\":\" '{print $2}'")
-  dzenColorL cGreen "" $ return nif
+  nif   <- logCmd ipCmd
+  return nif
+  where
+    ipCmd = "ip a | grep \"state UP\" | awk '{print $2}' | tr -d ':'"
+
+-- Logger for ESSID
+logActiveESSID :: X (Maybe String)
+logActiveESSID =
+  logCmd $ unwords [ "iwconfig wlp2s0 | grep ESSID "
+                   , "| sed -e 's/off\\/any//g'"
+                   , "| awk -F\":\" '{print $2}' "
+                   , "| tr -d '\"' | tr -d ' '"
+                   ]
 
 -- Logger for memory usage
 logMemUsage :: X (Maybe String)
@@ -116,7 +124,8 @@ logHook' lh rh =
       { ppOutput = hPutStrLn rh
       , ppSep    = " • "
       , ppExtras =
-        [ logActiveIF
+        [ dzenColorL cGreen "" $ logActiveIF
+        , dzenColorL cMagenta "" $ logActiveESSID
         , logMemUsage
         , dzenColorL cCyan "" $ logMailNotmuch "tag:unread"
         , dzenColorL cRed "" $ logMailNotmuch "tag:flagged"
@@ -162,12 +171,12 @@ dzenBar w a x =
 main :: IO ()
 main = do
   -- TODO: get width from Graphics.X11.Xrandr?
-  let width = 640 -- half size of screen
+  let width = 683 -- half size of screen
   lh <- spawnPipe $ dzenBar (width) "l" 0
   rh <- spawnPipe $ dzenBar (width) "r" (0 - width)
   xmonad $ withUrgencyHook NoUrgencyHook $ defaultConfig
     { terminal           = terminal'
-    , modMask            = mod1Mask
+    , modMask            = modMask'
     , borderWidth        = borderWidth'
     , normalBorderColor  = borderColor'
     , focusedBorderColor = focusedColor'
