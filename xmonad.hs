@@ -1,7 +1,6 @@
 
 {-
 TODO:
- - Memory-usage Int instead of Double
  - Volume percentage in rightHook
  - get width of Screen for logHook
  - UTF8 in title
@@ -106,9 +105,10 @@ logActiveESSID =
 logMemUsage :: X (Maybe String)
 logMemUsage = do
   mem <- logCmd ("ps aux | awk '{sum +=$4}; END {print sum}'")
-  case ((read (fromMaybe "0" mem) :: Double) < 90) of
-   True  -> wrapL "" "%" . dzenColorL "" "" $ return mem
-   False -> wrapL "" "%" . dzenColorL cRed "" $ return mem
+  let val = round (read (fromMaybe "0" mem) :: Double)
+  case (val < 90) of
+   True  -> wrapL "" "%" . dzenColorL "" "" $ return (Just (show val))
+   False -> wrapL "" "%" . dzenColorL cRed "" $ return (Just (show val))
 
 -- Logger for audio volume
 -- aumixVolume does not work for me
@@ -126,12 +126,12 @@ logHook' lh rh =
   (dynamicLogWithPP $ leftPP lh) >> (dynamicLogWithPP $ rightPP rh)
   where
     leftPP lh  = defaultPP    -- configuration of left logHook
-      { ppOutput  = hPutStrLn lh . decodeString
+      { ppOutput  = hPutStrLn lh
       , ppTitle   = dzenColor cGrey cYellow . shorten 70
       , ppCurrent = dzenColor cYellow "" . wrap "[" "]"
       , ppLayout  = dzenColor cBlue ""
       , ppUrgent  = dzenColor cWhite cRed . wrap "!" "!"
-      , ppSep     = encodeString " • "
+      , ppSep     = " • "
       , ppOrder   = \(ws:l:t:_) -> [ws,l,t]
       }
     rightPP rh = defaultPP    -- configuration of right logHook
