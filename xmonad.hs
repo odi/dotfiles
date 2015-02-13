@@ -1,4 +1,16 @@
 
+{-
+TODO:
+ - Memory-usage Int instead of Double
+ - Volume percentage in rightHook
+ - get width of Screen for logHook
+ - UTF8 in title
+   -> using decodeString from utf8-string
+   -> works for title but not for seperator
+      -> works for seperator if using encodeString
+ - UTF8 in shell-prompt
+-}
+
 import XMonad
 
 import XMonad.Hooks.DynamicLog
@@ -20,6 +32,7 @@ import XMonad.Util.Replace
 import qualified Data.Map as M
 import Data.Maybe (fromMaybe)
 import GHC.IO.Handle.Types
+import Codec.Binary.UTF8.String
 
 -- some default configurations
 terminal'     = "xterm"
@@ -113,12 +126,13 @@ logHook' lh rh =
   (dynamicLogWithPP $ leftPP lh) >> (dynamicLogWithPP $ rightPP rh)
   where
     leftPP lh  = defaultPP    -- configuration of left logHook
-      { ppOutput  = hPutStrLn lh
+      { ppOutput  = hPutStrLn lh . decodeString
       , ppTitle   = dzenColor cGrey cYellow . shorten 70
       , ppCurrent = dzenColor cYellow "" . wrap "[" "]"
       , ppLayout  = dzenColor cBlue ""
       , ppUrgent  = dzenColor cWhite cRed . wrap "!" "!"
-      , ppSep     = " • "
+      , ppSep     = encodeString " • "
+      , ppOrder   = \(ws:l:t:_) -> [ws,l,t]
       }
     rightPP rh = defaultPP    -- configuration of right logHook
       { ppOutput = hPutStrLn rh
