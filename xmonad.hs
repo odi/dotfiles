@@ -8,7 +8,13 @@ TODO:
    -> works for title but not for seperator
       -> works for seperator if using encodeString
  - UTF8 in shell-prompt
+ - logHook will only updated if a XMonad action comes
+   -> is it possible to regularly update this?
 -}
+
+-- more informations:
+-- http://xmonad.org/xmonad-docs/xmonad/index.html
+-- http://xmonad.org/xmonad-docs/xmonad-contrib/index.html
 
 import XMonad
 
@@ -20,6 +26,7 @@ import XMonad.Hooks.UrgencyHook
 import XMonad.Libs.Completion
 
 import XMonad.Prompt
+import XMonad.Prompt.AppLauncher
 import XMonad.Prompt.XMonad
 import XMonad.Prompt.Shell
 
@@ -86,11 +93,8 @@ logMailNotmuch query = logCmd ("notmuch count " ++ query)
 
 -- Logger for network interfaces.
 logActiveIF :: X (Maybe String)
-logActiveIF = do
-  nif   <- logCmd ipCmd
-  return nif
-  where
-    ipCmd = "ip a | grep \"state UP\" | awk '{print $2}' | tr -d ':'"
+logActiveIF =
+  logCmd "ip a | grep \"state UP\" | awk '{print $2}' | tr -d ':'"
 
 -- Logger for ESSID
 logActiveESSID :: X (Maybe String)
@@ -127,7 +131,7 @@ logHook' lh rh =
   where
     leftPP lh  = defaultPP    -- configuration of left logHook
       { ppOutput  = hPutStrLn lh
-      , ppTitle   = dzenColor cGrey cYellow . shorten 70
+      , ppTitle   = dzenColor cGrey cYellow . shorten 70 . wrap " " " "
       , ppCurrent = dzenColor cYellow "" . wrap "[" "]"
       , ppLayout  = dzenColor cBlue ""
       , ppUrgent  = dzenColor cWhite cRed . wrap "!" "!"
@@ -170,6 +174,7 @@ keys_ (XConfig {modMask = modm}) = M.fromList $
   , ((modm, xK_p), shellPrompt promptConf)
   , ((modm, xK_BackSpace), focusUrgent)
   , ((modm, xK_q), spawn "killall dzen2" >> restart "xmonad" True)
+  , ((modm, xK_l), launchApp promptConf "firefox-nw.sh")
   ]
 
 dzenBar :: Int -> String -> Int -> String
