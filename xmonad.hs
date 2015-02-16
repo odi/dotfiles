@@ -117,6 +117,9 @@ keys_ (XConfig {modMask = modm}) = M.fromList $
   , ((modm, xK_BackSpace), focusUrgent)
   , ((modm, xK_q), spawn "killall dzen2 xmobar" >> restart "xmonad" True)
   , ((modm, xK_l), launchApp promptConf "firefox-nw.sh")
+    -- get keysym from `xev'
+  , ((0, 0x1008ff13), spawn "amixer sset Master 2%+")  -- increase volume
+  , ((0, 0x1008ff11), spawn "amixer sset Master 2%-")  -- decrease volume
   ]
 
 {-
