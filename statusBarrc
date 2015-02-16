@@ -1,0 +1,8 @@
+Config { commands = [ Run Memory [] 10
+                    , Run MultiCpu [] 10
+                    , Run Kbd []
+                    ]
+       , template = "%memory% • %multicpu% • %kbd% "
+       , font = "xft:monospace:pixelsize=11:weight=normal"
+       , position = Bottom
+       }
