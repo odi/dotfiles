@@ -1,15 +1,12 @@
 
 {-
 TODO:
- - Volume percentage in rightHook
  - get width of Screen for logHook
  - UTF8 in title
    -> using decodeString from utf8-string
    -> works for title but not for seperator
       -> works for seperator if using encodeString
  - UTF8 in shell-prompt
- - logHook will only updated if a XMonad action comes
-   -> is it possible to regularly update this?
 -}
 
 -- more informations:
@@ -48,6 +45,7 @@ borderColor'  = cGrey
 modMask'      = mod4Mask
 editor        = "emacsclient -c -a \"emacs\" "
 dzenExec      = "dzen2"
+xmobarExec    = "/home/odi/progs/xmobar-0.22.1/.cabal-sandbox/bin/xmobar"
 
 -- used colors
 cRed     = "#ff6347"
@@ -87,73 +85,16 @@ promptConf = defaultXPConfig
   , defaultText       = []
   }
 
--- Logger for notmuch counting queries.
-logMailNotmuch :: String -> X (Maybe String)
-logMailNotmuch query = logCmd ("notmuch count " ++ query)
-
--- Logger for network interfaces.
-logActiveIF :: X (Maybe String)
-logActiveIF =
-  logCmd "ip a | grep \"state UP\" | awk '{print $2}' | tr -d ':'"
-
--- Logger for ESSID
-logActiveESSID :: X (Maybe String)
-logActiveESSID =
-  logCmd $ unwords [ "iwconfig wlp2s0 | grep ESSID "
-                   , "| sed -e 's/off\\/any//g'"
-                   , "| awk -F\":\" '{print $2}' "
-                   , "| tr -d '\"' | tr -d ' '"
-                   ]
-
--- Logger for memory usage
-logMemUsage :: X (Maybe String)
-logMemUsage = do
-  mem <- logCmd ("ps aux | awk '{sum +=$4}; END {print sum}'")
-  let val = round (read (fromMaybe "0" mem) :: Double)
-  case (val < 90) of
-   True  -> wrapL "" "%" . dzenColorL "" "" $ return (Just (show val))
-   False -> wrapL "" "%" . dzenColorL cRed "" $ return (Just (show val))
-
--- Logger for audio volume
--- aumixVolume does not work for me
-logAMixer :: X (Maybe String)
-logAMixer = do
-  vol <- logCmd $ concat
-         [ "amixer sget Master "
-         , "| grep \"Front Left:\" | cut -d\" \" -f7 "
-         , "| tr -d \"[\" | tr -d \"]\" | tr -d \"%\""
-         ]
-  wrapL "" "%" . dzenColorL "" "" $ return vol
-
-logHook' :: Handle -> Handle -> X ()
-logHook' lh rh =
-  (dynamicLogWithPP $ leftPP lh) >> (dynamicLogWithPP $ rightPP rh)
-  where
-    leftPP lh  = defaultPP    -- configuration of left logHook
-      { ppOutput  = hPutStrLn lh
-      , ppTitle   = dzenColor cGrey cYellow . shorten 70 . wrap " " " "
-      , ppCurrent = dzenColor cYellow "" . wrap "[" "]"
-      , ppLayout  = dzenColor cBlue ""
-      , ppUrgent  = dzenColor cWhite cRed . wrap "!" "!"
-      , ppSep     = " • "
-      , ppOrder   = \(ws:l:t:_) -> [ws,l,t]
-      }
-    rightPP rh = defaultPP    -- configuration of right logHook
-      { ppOutput = hPutStrLn rh
-      , ppSep    = " • "
-      , ppExtras =
-        [ dzenColorL cGreen "" $ logActiveIF
-        , dzenColorL cMagenta "" $ logActiveESSID
-        , logMemUsage
-        , dzenColorL cCyan "" $ logMailNotmuch "tag:unread"
-        , dzenColorL cRed "" $ logMailNotmuch "tag:flagged"
-        , dzenColorL cLGrey "" $ battery
-        , dzenColorL cLGrey "" $ date "%a %b %d"
-        , dzenColorL cBlue "" $ date "[%V]"
-        , dzenColorL cWhite "" $ date "%R "
-        ]
-      , ppOrder  = \(ws:l:_:xs) -> xs
-      }
+logHook' :: Handle -> X ()
+logHook' h = dynamicLogWithPP $ defaultPP
+  { ppOutput  = hPutStrLn h
+  , ppTitle   = dzenColor cGrey cYellow . shorten 70 . wrap " " " "
+  , ppCurrent = dzenColor cYellow "" . wrap "[" "]"
+  , ppLayout  = dzenColor cBlue ""
+  , ppUrgent  = dzenColor cWhite cRed . wrap "!" "!"
+  , ppSep     = " • "
+  , ppOrder   = \(ws:l:t:_) -> [ws,l,t]
+  }
 
 layoutHook' = avoidStruts $ layoutHook defaultConfig
 
@@ -169,37 +110,62 @@ keys_ (XConfig {modMask = modm}) = M.fromList $
     -- dirty hack of switching to firefox/vimperator windows
   , ((modm, xK_v), windowPromptGotoPropClass "vimperator" promptConf)
   , ((modm, xK_u), sendMessage $ ToggleStrut U)
+  , ((modm, xK_i), sendMessage $ ToggleStrut D)
   , ((modm .|. shiftMask, xK_l), spawn "lock.sh")
   , ((modm, xK_x), xmonadPrompt promptConf)
   , ((modm, xK_p), shellPrompt promptConf)
   , ((modm, xK_BackSpace), focusUrgent)
-  , ((modm, xK_q), spawn "killall dzen2" >> restart "xmonad" True)
+  , ((modm, xK_q), spawn "killall dzen2 xmobar" >> restart "xmonad" True)
   , ((modm, xK_l), launchApp promptConf "firefox-nw.sh")
   ]
 
-dzenBar :: Int -> String -> Int -> String
-dzenBar w a x =
+{-
+ | workspaceBar |              |infoBar |
+ |--------------------------------------|
+ | ~
+ |--------------------------------------|
+ | statusBar                            |
+
+workspaceBar ... works with dzen2 and will spawn by logHook from XMonad
+infoBar      ... xmobar (top) with major information about the system
+statusBar    ... xmobar (bottom) with minor informations about the system
+
+the workspaceBar + infoBar could be toggled with modm + u and the statusBar
+could be toggled with modm + i.
+-}
+
+-- workspaceBar
+-- the logHook will be spawned to it
+-- h <- spawnPipe $ workspaceBar width "l" 0
+-- xmonad $ defaultConfig {
+--   logHook = logHook' h
+-- }
+workspaceBar :: Int -> String -> Int -> String
+workspaceBar w a x =
   unwords [ dzenExec
-          , "-w", show w
-          , "-ta", a
+          , "-w", show w, "-ta", a, "-x", show x
           , "-bg", "'" ++ cBlack ++ "'"
           , "-fn", "'" ++ defaultFont 14 "normal" ++ "'"
-          , "-x", show x
           ]
+
+-- call `xmobar' with a configuration-file
+xmobarBar :: FilePath -> String
+xmobarBar fp = unwords [ xmobarExec, fp ]
 
 main :: IO ()
 main = do
   -- TODO: get width from Graphics.X11.Xrandr?
   let width = 683 -- half size of screen
-  lh <- spawnPipe $ dzenBar (width) "l" 0
-  rh <- spawnPipe $ dzenBar (width) "r" (0 - width)
+  h <- spawnPipe $ workspaceBar (width) "l" 0
+  spawnPipe $ xmobarBar "/home/odi/conf/infoBarrc"    -- infoBar top-right
+  spawnPipe $ xmobarBar "/home/odi/conf/statusBarrc"  -- stautsBar bottom
   xmonad $ withUrgencyHook NoUrgencyHook $ defaultConfig
     { terminal           = terminal'
     , modMask            = modMask'
     , borderWidth        = borderWidth'
     , normalBorderColor  = borderColor'
     , focusedBorderColor = focusedColor'
-    , logHook            = logHook' lh rh
+    , logHook            = logHook' h
     , layoutHook         = layoutHook'
     , keys               = keys'
     }
