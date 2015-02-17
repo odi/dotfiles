@@ -91,7 +91,7 @@ logHook' h = dynamicLogWithPP $ defaultPP
   , ppTitle   = dzenColor cGrey cYellow . shorten 70 . wrap " " " "
   , ppCurrent = dzenColor cYellow "" . wrap "[" "]"
   , ppLayout  = dzenColor cBlue ""
-  , ppUrgent  = dzenColor cWhite cRed . wrap "!" "!"
+  , ppUrgent  = dzenColor cWhite cRed . wrap "[" "]"
   , ppSep     = " • "
   , ppOrder   = \(ws:l:t:_) -> [ws,l,t]
   }

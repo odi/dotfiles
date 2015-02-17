@@ -1,8 +1,13 @@
 Config { commands = [ Run Memory [] 10
                     , Run MultiCpu [] 10
                     , Run Kbd []
+                    , Run Locks
+                    , Run CoreTemp [] 10
+                    , Run MPD [] 10
                     ]
-       , template = "%memory% • %multicpu% • %kbd% "
+       , template = "%memory% • %multicpu% • %coretemp% • }{ • %kbd% "
        , font = "xft:monospace:pixelsize=11:weight=normal"
        , position = Bottom
+       , bgColor = "#000000"
+       , fgColor = "#c0c0c0"
        }
