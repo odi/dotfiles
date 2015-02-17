@@ -13,6 +13,8 @@ export EDITOR="emacsclient -a 'emacs' -c"
 
 # set zsh options
 setopt prompt_subst
+setopt completealiases
+setopt hist_ignore_dups  # do not save duplicates in history
 
 # history
 HISTFILE=${HOME}/.zsh_history
@@ -31,6 +33,7 @@ zstyle ':vcs_info:*'    formats "(%s)-[%b]"
 zstyle ':vcs_info:git*' check-for-changes true
 zstyle ':vcs_info:git*' stagedstr '•'        # activate with %c
 zstyle ':vcs_info:git*' unstagedstr '✖'      # activate with %u
+zstyle ':completion:*'  menu select
 
 # aliases
 alias ls='ls --color'
@@ -42,18 +45,10 @@ alias e='emacsclient -a "emacs" -c'
 # prompt
 # calculate width of the terminal with $(echo $COLUMNS/2 | bc)
 PROMPT="%(!.%{$fg_bold[red]%}.%{$fg_bold[green]%})[%n@%m %$(echo $COLUMNS/2 | bc)<..<%~%<<] "$'\n'"%# %{$reset_color%}%"
-RPROMPT=$'%{$fg[magenta]%}$(cabal_sandbox) %{$fg[yellow]%}$(vcs_info_wrapper)%{$reset_color%}%'
+RPROMPT=$'%{$fg[magenta]%}$(cabal_sandbox) %{$fg[yellow]%}${vcs_info_msg_0_}%{$reset_color%}%'
 
 # call function before drawing the prompts
-precmd () {
-    vcs_info
-}
-
-# wrapper for vcs_info
-# configure style with zstyle ':vcs_info:*'
-vcs_info_wrapper () {
-    echo "$vcs_info_msg_0_"
-}
+precmd () { vcs_info }
 
 # check if the directory is in a cabal sandbox
 cabal_sandbox () {
@@ -65,3 +60,6 @@ cabal_sandbox () {
     else echo ""
     fi
 }
+
+# starts top with a given process-name (e.g. ptop firefox)
+ptop () { top -p $(pgrep -d, $1) 2>/dev/null }
