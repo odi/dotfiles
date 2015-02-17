@@ -3,9 +3,9 @@ Config { commands = [ Run Memory [] 10
                     , Run Kbd []
                     , Run Locks
                     , Run CoreTemp [] 10
-                    , Run MPD [] 10
+                    , Run MPD ["-t","<state> <composer> <title> "] 10
                     ]
-       , template = "%memory% • %multicpu% • %coretemp% • }{ • %kbd% "
+       , template = "%memory% • %multicpu% • %coretemp% • %mpd% •}{ • %kbd% "
        , font = "xft:monospace:pixelsize=11:weight=normal"
        , position = Bottom
        , bgColor = "#000000"
