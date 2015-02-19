@@ -71,6 +71,8 @@ alias -s txt=${EDITOR}
 alias -s cabal=${EDITOR}
 alias G='grep --color -i'
 alias h='history'
+alias feh='feh -F'
+alias 1='cd -0'
 
 # prompt
 # calculate width of the terminal with $(echo $COLUMNS/2 | bc)
@@ -99,6 +101,3 @@ E () { emacsclient -c -a 'emacs' "/sudo:root@localhost:$1" }
 
 # pretty print json
 pp-json () { cat - | python -mjson.tool }
-
-# search history for parameter
-hs () { fc -l -D -E -m '"$1"' 1 }
