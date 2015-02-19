@@ -15,6 +15,9 @@ TODO:
 
 import XMonad
 
+import qualified XMonad.Actions.Search as S
+import qualified XMonad.Actions.Submap as SM
+
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.UrgencyHook
@@ -24,6 +27,7 @@ import XMonad.Libs.Completion
 
 import XMonad.Prompt
 import XMonad.Prompt.AppLauncher
+import XMonad.Prompt.Input
 import XMonad.Prompt.XMonad
 import XMonad.Prompt.Shell
 
@@ -46,6 +50,7 @@ modMask'      = mod4Mask
 editor        = "emacsclient -c -a \"emacs\" "
 dzenExec      = "dzen2"
 xmobarExec    = "/home/odi/progs/xmobar-0.22.1/.cabal-sandbox/bin/xmobar"
+browser       = "/home/odi/bin/firefox-nw.sh"
 
 -- used colors
 cRed     = "#ff6347"
@@ -120,7 +125,33 @@ keys_ (XConfig {modMask = modm}) = M.fromList $
     -- get keysym from `xev'
   , ((0, 0x1008ff13), spawn "amixer sset Master 2%+")  -- increase volume
   , ((0, 0x1008ff11), spawn "amixer sset Master 2%-")  -- decrease volume
+  , ((modm, xK_s), searchEnginePrompt promptConf S.google searchEngineMap)
   ]
+
+data SEngine = SEngine
+instance XPrompt SEngine where
+  showXPrompt SEngine        = "search with: "
+  commandToComplete _ c = c
+  nextCompletion      _ = getNextCompletion
+
+searchEnginePrompt :: XPConfig -> S.SearchEngine -> M.Map (String) (S.SearchEngine) -> X()
+searchEnginePrompt config defeng sem =
+  mkXPrompt SEngine config (mkComplFunFromList $ map fst (M.toList sem)) $ fireSearchEngine
+  where
+    fireSearchEngine :: String -> X ()
+    fireSearchEngine name = S.promptSearchBrowser config browser $
+                            fromMaybe defeng (M.lookup name sem)
+
+searchEngineMap :: M.Map (String) (S.SearchEngine)
+searchEngineMap = M.fromList $
+  [ ("google", S.google)    -- search with google
+  , ("hoogle", S.hoogle)    -- search with hoogle
+  , ("hayoo",  hayoo)       -- search with hayoo
+  ]
+  where
+    seName :: S.SearchEngine -> String
+    seName name _ = name
+    hayoo = S.searchEngine "hayoo" "http://hayoo.fh-wedel.de/?query="
 
 {-
  | workspaceBar |              |infoBar |
