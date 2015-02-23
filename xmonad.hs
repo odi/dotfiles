@@ -1,4 +1,4 @@
-
+{-# LANGUAGE OverloadedStrings #-}
 {-
 TODO:
  - get width of Screen for logHook
@@ -7,39 +7,45 @@ TODO:
    -> works for title but not for seperator
       -> works for seperator if using encodeString
  - UTF8 in shell-prompt
+ - move history part and search engine to xmonad-ext?
 -}
 
 -- more informations:
 -- http://xmonad.org/xmonad-docs/xmonad/index.html
 -- http://xmonad.org/xmonad-docs/xmonad-contrib/index.html
 
-import XMonad
+import           XMonad
 
 import qualified XMonad.Actions.Search as S
 import qualified XMonad.Actions.Submap as SM
 
-import XMonad.Hooks.DynamicLog
-import XMonad.Hooks.ManageDocks
-import XMonad.Hooks.UrgencyHook
+import           XMonad.Hooks.DynamicLog
+import           XMonad.Hooks.ManageDocks
+import           XMonad.Hooks.UrgencyHook
 
 -- imported from xmonad-ext
-import XMonad.Libs.Completion
+import           XMonad.Libs.Completion
+import           XMonad.Ext.BrowserPrompt
 
-import XMonad.Prompt
-import XMonad.Prompt.AppLauncher
-import XMonad.Prompt.Input
-import XMonad.Prompt.XMonad
-import XMonad.Prompt.Shell
+import           XMonad.Prompt
+import           XMonad.Prompt.AppLauncher
+import           XMonad.Prompt.Input
+import           XMonad.Prompt.XMonad
+import           XMonad.Prompt.Shell
 
-import XMonad.Util.Font
-import XMonad.Util.Loggers
-import XMonad.Util.Run
-import XMonad.Util.Replace
+import           XMonad.Util.Font
+import           XMonad.Util.Loggers
+import           XMonad.Util.Run
+import           XMonad.Util.Replace
 
 import qualified Data.Map as M
-import Data.Maybe (fromMaybe)
-import GHC.IO.Handle.Types
-import Codec.Binary.UTF8.String
+import           Data.Maybe (fromMaybe)
+import           GHC.IO.Handle.Types
+
+import           Control.Applicative
+import           Database.SQLite.Simple
+
+import           System.Environment
 
 -- some default configurations
 terminal'     = "xterm"
@@ -50,7 +56,8 @@ modMask'      = mod4Mask
 editor        = "emacsclient -c -a \"emacs\" "
 dzenExec      = "dzen2"
 xmobarExec    = "/home/odi/progs/xmobar-0.22.1/.cabal-sandbox/bin/xmobar"
-browser       = "/home/odi/bin/firefox-nw.sh"
+browser       = "conkeror"
+placesDB      = "/home/odi/.conkeror.mozdev.org/conkeror/l65w5mjs.odi/places.sqlite"
 
 -- used colors
 cRed     = "#ff6347"
@@ -113,7 +120,7 @@ keys_ (XConfig {modMask = modm}) = M.fromList $
   , ((modm, xK_g), windowPromptGoto' promptConf)
   , ((modm, xK_b), windowPromptBring' promptConf)
     -- dirty hack of switching to firefox/vimperator windows
-  , ((modm, xK_v), windowPromptGotoPropClass "vimperator" promptConf)
+  , ((modm, xK_v), windowPromptGotoPropClass "conkeror" promptConf)
   , ((modm, xK_u), sendMessage $ ToggleStrut U)
   , ((modm, xK_i), sendMessage $ ToggleStrut D)
   , ((modm .|. shiftMask, xK_l), spawn "lock.sh")
@@ -126,6 +133,7 @@ keys_ (XConfig {modMask = modm}) = M.fromList $
   , ((0, 0x1008ff13), spawn "amixer sset Master 2%+")  -- increase volume
   , ((0, 0x1008ff11), spawn "amixer sset Master 2%-")  -- decrease volume
   , ((modm, xK_s), searchEnginePrompt promptConf S.google searchEngineMap)
+  , ((modm, xK_o), urlHistoryPrompt promptConf (browserHistory Conkeror placesDB))
   ]
 
 data SEngine = SEngine
@@ -134,24 +142,30 @@ instance XPrompt SEngine where
   commandToComplete _ c = c
   nextCompletion      _ = getNextCompletion
 
-searchEnginePrompt :: XPConfig -> S.SearchEngine -> M.Map (String) (S.SearchEngine) -> X()
-searchEnginePrompt config defeng sem =
-  mkXPrompt SEngine config (mkComplFunFromList $ map fst (M.toList sem)) $ fireSearchEngine
+searchEnginePrompt :: XPConfig -> S.SearchEngine -> M.Map (String) (S.SearchEngine) -> X ()
+searchEnginePrompt config defeng sem = do
+  mkXPrompt SEngine config (mkComplFunFromList $ map (fst) (M.toList sem)) $ fireSearchEngine
   where
     fireSearchEngine :: String -> X ()
     fireSearchEngine name = S.promptSearchBrowser config browser $
                             fromMaybe defeng (M.lookup name sem)
 
+-- TODO: move it to a util module
+-- mkComplListFuzzy :: [String] -> String -> IO [String]
+-- mkComplListFuzzy ss p = return $ mapMaybe (\x -> match x (filter isLetter p)) ss
+--   where
+--     fuzzyMatch s p = s =~ (intercalate ".*?" $ map (:[]) p)
+--     match s p      = if (fuzzyMatch s p) then Just s else Nothing
+
 searchEngineMap :: M.Map (String) (S.SearchEngine)
 searchEngineMap = M.fromList $
-  [ ("google", S.google)    -- search with google
-  , ("hoogle", S.hoogle)    -- search with hoogle
-  , ("hayoo",  hayoo)       -- search with hayoo
-  ]
+  [ se S.google, se S.hoogle, se hackage, se hayoo ]
   where
-    seName :: S.SearchEngine -> String
-    seName name _ = name
+    se :: S.SearchEngine -> (String, S.SearchEngine)
+    se x@(S.SearchEngine name _) = (name, x)
+
     hayoo = S.searchEngine "hayoo" "http://hayoo.fh-wedel.de/?query="
+    hackage = S.searchEngine "hackage" "http://hackage.haskell.org/packages/search?terms="
 
 {-
  | workspaceBar |              |infoBar |
@@ -188,6 +202,7 @@ xmobarBar fp = unwords [ xmobarExec, fp ]
 
 main :: IO ()
 main = do
+  setEnv "BROWSER" browser
   -- TODO: get width from Graphics.X11.Xrandr?
   let width = 683 -- half size of screen
   h <- spawnPipe $ workspaceBar (width) "l" 0
