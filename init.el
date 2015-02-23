@@ -100,7 +100,7 @@
 ;; the url under the point.
 ;; `firefox-nw.sh' just opens an url in a new window.
 (setq browse-url-browser-function 'browse-url-generic)
-(setq browse-url-generic-program "firefox-nw.sh")
+(setq browse-url-generic-program "conkeror")
 
 ;; ## helm
 ;; http://wikemacs.org/wiki/How_to_write_helm_extensions
