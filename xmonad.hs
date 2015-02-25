@@ -103,7 +103,7 @@ logHook' h = dynamicLogWithPP $ defaultPP
   , ppTitle   = dzenColor cGrey cYellow . shorten 70 . wrap " " " "
   , ppCurrent = dzenColor cYellow "" . wrap "[" "]"
   , ppLayout  = dzenColor cBlue ""
-  , ppUrgent  = dzenColor cWhite cRed . wrap "[" "]"
+  , ppUrgent  = dzenColor cBlack cRed . wrap "[" "]"
   , ppSep     = " • "
   , ppOrder   = \(ws:l:t:_) -> [ws,l,t]
   }
@@ -132,7 +132,7 @@ keys_ (XConfig {modMask = modm}) = M.fromList $
     -- get keysym from `xev'
   , ((0, 0x1008ff13), spawn "amixer sset Master 2%+")  -- increase volume
   , ((0, 0x1008ff11), spawn "amixer sset Master 2%-")  -- decrease volume
-  , ((modm, xK_s), searchEnginePrompt promptConf S.google searchEngineMap)
+  , ((modm, xK_s), searchEnginePrompt promptConf duckduck searchEngineMap)
   , ((modm, xK_o), urlHistoryPrompt promptConf (browserHistory Conkeror placesDB))
   ]
 
@@ -157,15 +157,19 @@ searchEnginePrompt config defeng sem = do
 --     fuzzyMatch s p = s =~ (intercalate ".*?" $ map (:[]) p)
 --     match s p      = if (fuzzyMatch s p) then Just s else Nothing
 
+-- First class function because I used it for my default search-engine.
+duckduck :: S.SearchEngine
+duckduck = S.searchEngine "duckduck" "https://duckduckgo.com/?q="
+
 searchEngineMap :: M.Map (String) (S.SearchEngine)
 searchEngineMap = M.fromList $
-  [ se S.google, se S.hoogle, se hackage, se hayoo ]
+  [ se S.google, se S.hoogle, se hackage, se hayoo, se duckduck ]
   where
     se :: S.SearchEngine -> (String, S.SearchEngine)
     se x@(S.SearchEngine name _) = (name, x)
 
-    hayoo = S.searchEngine "hayoo" "http://hayoo.fh-wedel.de/?query="
-    hackage = S.searchEngine "hackage" "http://hackage.haskell.org/packages/search?terms="
+    hayoo    = S.searchEngine "hayoo" "http://hayoo.fh-wedel.de/?query="
+    hackage  = S.searchEngine "hackage" "http://hackage.haskell.org/packages/search?terms="
 
 {-
  | workspaceBar |              |infoBar |
