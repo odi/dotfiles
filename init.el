@@ -10,6 +10,9 @@
 ;; - use fill-column-indicator? (http://www.emacswiki.org/emacs/FillColumnIndicator)
 ;; - using smart-mode-line?
 ;; - flyspell for emails?
+;; - set org-refile-targets more than the actual file
+;;   -> http://sachachua.com/blog/2015/02/learn-take-notes-efficiently-org-mode/
+;; - configure org-mobile
 
 ;; ## Basic configurations
 (tool-bar-mode -1)		;; disable tool-bar
@@ -292,7 +295,11 @@
 	("Ll" "Links for reading"
 	 ((todo "TODO"
 		((org-agenda-files '("~/wiki/Links.org"))
-		 (org-agenda-overriding-header "Links for reading")))))))
+		 (org-agenda-overriding-header "Links for reading")))))
+	("N" "Quicknotes"
+	 ((todo "TODO"
+		((org-agenda-files '("~/wiki/notes/Notes.org"))
+		 (org-agenda-overriding-header "Quicknotes")))))))
 
 ;; ## org-mode capture
 (setq org-capture-templates
@@ -315,7 +322,7 @@
 	("n" "Quicknote"
 	 ;; TODO: move Notes.org to org/Notes.org
 	 entry (file "~/wiki/notes/Notes.org")
-	 "** TODO %?\n  :PROPERTIES:\n :CREATED: %^U\n  :END:")))
+	 "* TODO %?\n :PROPERTIES:\n :CREATED: %^U\n :END:")))
 
 ;; ## paradox
 ;; https://github.com/Bruce-Connor/paradox/
