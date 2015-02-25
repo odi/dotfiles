@@ -80,7 +80,10 @@ PROMPT="%(!.%{$fg_bold[red]%}.%{$fg_bold[green]%})[%n@%m %$(echo $COLUMNS/2 | bc
 RPROMPT=$'%{$fg_bold[magenta]%}$(cabal_sandbox) %{$fg_bold[yellow]%}${vcs_info_msg_0_}%(?..%{$fg[red]%}%?)%{$reset_color%}%'
 
 # call function before drawing the prompts
-precmd () { vcs_info }
+precmd () {
+    print -Pn "\e]0;zsh - %l: %~ $TITLE\a"
+    vcs_info
+}
 
 # check if the directory is in a cabal sandbox
 cabal_sandbox () {
@@ -101,3 +104,7 @@ E () { emacsclient -c -a 'emacs' "/sudo:root@localhost:$1" }
 
 # pretty print json
 pp-json () { cat - | python -mjson.tool }
+
+# set and unset title of term
+title () { export TITLE="=$1=" }
+untitle () { unset TITLE }
