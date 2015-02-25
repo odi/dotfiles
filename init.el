@@ -33,19 +33,20 @@
 ;; see: http://xahlee.blogspot.co.at/2012/06/emacs-24-package-system-problems.html
 (add-to-list 'load-path "~/.emacs.d/elpa/use-package-20150118.722")
 (add-to-list 'load-path "~/.emacs.d/elpa/bind-key-20150102.1532")
-(add-to-list 'load-path "~/.emacs.d/elpa/helm-20150203.36")
-(add-to-list 'load-path "~/.emacs.d/elpa/helm-swoop-20150201.2203")
-(add-to-list 'load-path "~/.emacs.d/elpa/haskell-mode-20150202.632")
-(add-to-list 'load-path "~/.emacs.d/elpa/jabber-20150127.745")
+(add-to-list 'load-path "~/.emacs.d/elpa/helm-20150224.852")
+(add-to-list 'load-path "~/.emacs.d/elpa/helm-swoop-20150209.806")
+(add-to-list 'load-path "~/.emacs.d/elpa/haskell-mode-20150222.908")
+(add-to-list 'load-path "~/.emacs.d/elpa/jabber-20150211.1330")
 (add-to-list 'load-path "~/.emacs.d/elpa/bbdb-20140830.2031")
-(add-to-list 'load-path "~/.emacs.d/elpa/projectile-20150201.1134")
-(add-to-list 'load-path "~/.emacs.d/elpa/helm-projectile-20150204.107")
+(add-to-list 'load-path "~/.emacs.d/elpa/projectile-20150223.8")
+(add-to-list 'load-path "~/.emacs.d/elpa/helm-projectile-20150222.312")
 (add-to-list 'load-path "~/.emacs.d/elpa/dash-20141220.1452")
-(add-to-list 'load-path "~/.emacs.d/elpa/auto-complete-20150201.150")
+(add-to-list 'load-path "~/.emacs.d/elpa/auto-complete-20150218.819")
 (add-to-list 'load-path "~/.emacs.d/elpa/popup-20150116.1223")
-(add-to-list 'load-path "~/.emacs.d/elpa/paradox-20150208.1211")
+(add-to-list 'load-path "~/.emacs.d/elpa/paradox-20150214.1342")
 (add-to-list 'load-path "~/.emacs.d/elpa/switch-window-20150114.215")
 (add-to-list 'load-path "~/.emacs.d/elpa/key-chord-20140929.2246")
+(add-to-list 'load-path "~/.emacs.d/elpa/yasnippet-20150212.240")
 
 ;; ## Package management
 ;; initialize package-management
@@ -80,6 +81,10 @@
 
 ;; for lazy people like my y instead of yes and n instead of no
 (defalias 'yes-or-no-p 'y-or-n-p)
+
+;; override default face for region
+(set-face-attribute 'region nil :background "lightgoldenrod2")
+(set-face-attribute 'org-mode-line-clock nil :inherit 'secondary-selection)
 
 ;; load secrets file
 (load "~/.emacs.d/elisp/secrets.el" t)
@@ -219,8 +224,17 @@
     (define-key notmuch-show-mode-map (kbd "C-c C-l") 'org-next-link)
     ;; open link at point in default-browser
     (define-key notmuch-show-mode-map (kbd "C-c C-o") 'browse-url-at-point)
-    (bind-key "C-c n u" '(lambda () (interactive) (notmuch-search "tag:unread"))))
-  :bind (("C-c n s" . notmuch-search)))
+    (bind-key "C-c n"
+	      (defhydra hydra-notmuch ()
+		"notmuch"
+		("u" (lambda () ;; unread messages
+		       (interactive)
+		       (notmuch-search "tag:unread"))
+		 "unread messages")
+		("f" (lambda () ;; flagged messages
+		       (interactive)
+		       (notmuch-search "tag:flagged"))
+		 "flagged messages")))))
 
 ;; ## magit
 (use-package magit
@@ -277,12 +291,17 @@
 (setq org-todo-keywords
       '((sequence "TODO" "NEXT" "|" "DONE" "CANC")))
 
+;; ## org-contacts
+(require 'org-contacts)
+(setq org-contacts-files "~/wiki/Contacts.org")
+
 ;; ## org-mode key bindings
 (bind-key "C-c a" 'org-agenda)
 (bind-key "C-c c" 'org-capture)
 (bind-key "C-c o" (lambda ()
 		    (interactive)
 		    (find-file "~/wiki/notes/Notes.org")))
+(bind-key "C-c C-w" 'org-refile) ;; C-u C-c C-w to jump to heading
 
 ;; ## org-refile
 (setq org-refile-targets '((org-agenda-files . (:maxlevel . 3))))
@@ -341,6 +360,20 @@
   (progn
     (key-chord-mode t)
     (key-chord-define-global "ww" 'other-window)))
+
+;; ## yasnippet
+(use-package yasnippet
+  :ensure yasnippet
+  :config
+  (progn
+    (setq yas-snippet-dirs '("~/.emacs.d/yasnippet"))
+    ;; https://github.com/capitaomorte/yasnippet/issues/362
+    (setq yas-indent-line 'fixed)
+    (add-hook 'org-mode-hook '(lambda () (yas-minor-mode)))))
+
+;; ## hydra
+(use-package hydra
+  :ensure hydra)
 
 ;; connect to freenode with username, password from ~/.authinfo
 (defun odi/erc-connect ()
