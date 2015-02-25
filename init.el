@@ -10,8 +10,6 @@
 ;; - use fill-column-indicator? (http://www.emacswiki.org/emacs/FillColumnIndicator)
 ;; - using smart-mode-line?
 ;; - flyspell for emails?
-;; - set org-refile-targets more than the actual file
-;;   -> http://sachachua.com/blog/2015/02/learn-take-notes-efficiently-org-mode/
 ;; - configure org-mobile
 
 ;; ## Basic configurations
@@ -282,6 +280,12 @@
 ;; ## org-mode key bindings
 (bind-key "C-c a" 'org-agenda)
 (bind-key "C-c c" 'org-capture)
+(bind-key "C-c o" (lambda ()
+		    (interactive)
+		    (find-file "~/wiki/notes/Notes.org")))
+
+;; ## org-refile
+(setq org-refile-targets '((org-agenda-files . (:maxlevel . 3))))
 
 ;; ## org-mode agenda
 (setq org-agenda-files
