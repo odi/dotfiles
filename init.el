@@ -47,6 +47,7 @@
 (add-to-list 'load-path "~/.emacs.d/elpa/switch-window-20150114.215")
 (add-to-list 'load-path "~/.emacs.d/elpa/key-chord-20140929.2246")
 (add-to-list 'load-path "~/.emacs.d/elpa/yasnippet-20150212.240")
+(add-to-list 'load-path "~/.emacs.d/elpa/hydra-20150224.1022")
 
 ;; ## Package management
 ;; initialize package-management
@@ -82,9 +83,7 @@
 ;; for lazy people like my y instead of yes and n instead of no
 (defalias 'yes-or-no-p 'y-or-n-p)
 
-;; override default face for region
-(set-face-attribute 'region nil :background "lightgoldenrod2")
-(set-face-attribute 'org-mode-line-clock nil :inherit 'secondary-selection)
+;;(set-face-attribute 'org-mode-line-clock nil :inherit 'secondary-selection)
 
 ;; load secrets file
 (load "~/.emacs.d/elisp/secrets.el" t)
@@ -186,6 +185,10 @@
 				       jabber-message-scroll
 				       odi/xmonad-notify))))
 
+;; ## hydra
+(use-package hydra
+  :ensure hydra)
+
 ;; ## notmuch
 (use-package notmuch
   :init
@@ -195,46 +198,111 @@
   (progn
     (setq notmuch-search-oldest-first nil)
     (setq message-kill-buffer-on-exit t)
-    ;; define some faces
-    (setq notmuch-search-line-faces '(("unread" . (:weight 'normal))))
-    (setq notmuch-tag-formats '(("unread"
-				 (propertize tag 'face
-					     '(:inherit font-lock-constant-face
-							:weight 'normal)))
-				("flagged"
-				 (propertize tag 'face
-					     '(:inherit font-lock-comment-face)))))
-    (set-face-attribute 'notmuch-search-date nil
-			:inherit font-lock-variable-name-face)
-    (set-face-attribute 'notmuch-search-count nil
-			:inherit font-lock-type-face)
-    (set-face-attribute 'notmuch-search-matching-authors nil
-			:inherit font-lock-function-name-face)
-    (set-face-attribute 'notmuch-tag-face nil
-			:weight 'normal
-			:foreground nil
-			:inherit font-lock-string-face)
-    ;; define some keyboard shortcuts
+
+    ;; add tag `muted` to messages in search-mode
     (define-key notmuch-search-mode-map "k"
+      (lambda (&optional beg end)
+	(interactive (notmuch-search-interactive-region))
+	(notmuch-search-tag '("+mute" "-unread") beg end)
+	(notmuch-search-next-thread)))
+
+    ;; add tag `muted` to messages in show-mode
+    (define-key notmuch-show-mode-map "k"
+      (lambda () (interactive) (notmuch-show-tag '("+mute" "-unread"))))
+
+    ;; add tag `archived` to message in search-mode
+    (define-key notmuch-search-mode-map "a"
+      (lambda (&optional beg end)
+	(interactive (notmuch-search-interactive-region))
+	(notmuch-search-tag '("+archive" "-unread") beg end)
+	(notmuch-search-next-thread)))
+
+    ;; add tag `archived` to message in show-mode
+    (define-key notmuch-show-mode-map "a"
+      (lambda () (interactive) (notmuch-show-tag '("+archive" "-unread"))))
+
+    ;; add tag `deleted` to message for deleting in search-mode
+    (define-key notmuch-search-mode-map "d"
+      (lambda (&optional beg end)
+	(interactive (notmuch-search-interactive-region))
+	(notmuch-search-tag '("+delete" "-unread") beg end)
+	(notmuch-search-next-thread)))
+
+    ;; add tag `deleted` to message for deleting in show-mode
+    (define-key notmuch-show-mode-map "d"
+      (lambda () (interactive) (notmuch-show-tag '("+delete" "-unread"))))
+
+    (define-key notmuch-show-mode-map "E"
       (lambda ()
 	(interactive)
-	(notmuch-search-tag '("+killed" "-unread"))
-	(notmuch-search-next-thread)))
+	(odi/notmuch-show-edit-message (notmuch-show-get-message-id))))
+
     ;; jump to next link
     (define-key notmuch-show-mode-map (kbd "C-c C-l") 'org-next-link)
     ;; open link at point in default-browser
     (define-key notmuch-show-mode-map (kbd "C-c C-o") 'browse-url-at-point)
     (bind-key "C-c n"
-	      (defhydra hydra-notmuch ()
-		"notmuch"
-		("u" (lambda () ;; unread messages
+    	      (defhydra hydra-notmuch (:color blue)
+    		"notmuch"
+    		("d" (lambda () ;; to delete messages
+    		       (interactive)
+    		       (notmuch-search "date:..3month tag:killed tag:lists tag:spam tag:mute"))
+    		 "to delete messages")
+    		("o" (lambda () ;; old messages
+    		       (interactive)
+    		       (notmuch-search "date:..6month"))
+    		 "old messages")
+		("r" (lambda () ;; review messages
 		       (interactive)
-		       (notmuch-search "tag:unread"))
-		 "unread messages")
-		("f" (lambda () ;; flagged messages
-		       (interactive)
-		       (notmuch-search "tag:flagged"))
-		 "flagged messages")))))
+		       (notmuch-search "tag:review"))
+		 "review messages")
+    		("s" notmuch-search "search messages")
+    		("S" (lambda () ;; spam messages
+    		       (interactive)
+    		       (notmuch-search "tag:spam and tag:killed tag:delete"))
+    		 "spam messages")
+    		("t" (lambda () ;; todo messages
+    		       (interactive)
+    		       (notmuch-search "tag:todo"))
+    		 "todo messages")
+    		("u" (lambda () ;; unread messages
+    		       (interactive)
+    		       (notmuch-search "tag:unread"))
+    		 "unread messages")))))
+
+(defvar odi/notmuch-tmp-tags-file "/tmp/notmuch-tags") ;; tmp-file for temporary stored tags
+(defvar odi/notmuch-tmp-edit-file "/tmp/notmuch-edit") ;; tmp-file for temporary stored message
+
+;; ;; INFO: works only right if synchronize_flags=false in ~/.notmuch-config!
+(defun odi/notmuch-show-edit-message (message-id)
+  (odi/notmuch-dump-tags message-id odi/notmuch-tmp-tags-file)
+  (find-file (notmuch-show-get-filename))
+  (message-mode)
+  (local-set-key (kbd "C-c C-e")
+		 '(lambda ()
+		    (interactive)
+		    (let ((orig-file (buffer-file-name)))
+		      (save-buffer)
+		      (write-file odi/notmuch-tmp-edit-file)
+		      (kill-buffer)
+		      (delete-file orig-file)
+		      (notmuch-poll)
+		      (copy-file odi/notmuch-tmp-edit-file orig-file)
+		      (notmuch-poll)
+		      (odi/notmuch-restore-tags odi/notmuch-tmp-tags-file)
+		      (delete-file odi/notmuch-tmp-edit-file)
+		      (delete-file odi/notmuch-tmp-tags-file)
+		      (notmuch-bury-or-kill-this-buffer)))))
+
+(defun odi/notmuch-dump-tags (message-id file)
+  "Dump tags from message with MESSAGE-ID to FILE."
+  (shell-command (concat "notmuch dump " (concat "--output=" file) " " message-id)))
+
+(defun odi/notmuch-restore-tags (file)
+  "Restore all tags from FILE and delete file after executing the program."
+  (shell-command
+   (concat "notmuch " "tag "
+	   (with-temp-buffer (insert-file-contents file) (buffer-string)))))
 
 ;; ## magit
 (use-package magit
@@ -342,6 +410,9 @@
 	("ce" "Calendar entry in `Scouts'"
 	 entry (file+headline "~/wiki/org/Diary.org" "Scouts")
 	 "** %?\n")
+	("a" "Action"
+	 entry (file+headline "~/wiki/org/Diary.org" "Actions")
+	 "** %?\n")
 	("n" "Quicknote"
 	 ;; TODO: move Notes.org to org/Notes.org
 	 entry (file "~/wiki/notes/Notes.org")
@@ -370,10 +441,6 @@
     ;; https://github.com/capitaomorte/yasnippet/issues/362
     (setq yas-indent-line 'fixed)
     (add-hook 'org-mode-hook '(lambda () (yas-minor-mode)))))
-
-;; ## hydra
-(use-package hydra
-  :ensure hydra)
 
 ;; connect to freenode with username, password from ~/.authinfo
 (defun odi/erc-connect ()
@@ -428,3 +495,6 @@ first position of the line."
 ;; wrapper function for jabber-notification
 (defun odi/xmonad-notify (&optional from buffer text proposed-alert)
   (odi/x-urgency-hint (selected-frame) t))
+
+;; load theme
+(load "~/.emacs.d/elisp/theme.el" t)
