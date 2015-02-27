@@ -163,13 +163,19 @@ duckduck = S.searchEngine "duckduck" "https://duckduckgo.com/?q="
 
 searchEngineMap :: M.Map (String) (S.SearchEngine)
 searchEngineMap = M.fromList $
-  [ se S.google, se S.hoogle, se hackage, se hayoo, se duckduck ]
+  [ se S.google, se S.hoogle
+  , se hackage, se hayoo, se duckduck, se wikien, se wikide
+  , se sof
+  ]
   where
     se :: S.SearchEngine -> (String, S.SearchEngine)
     se x@(S.SearchEngine name _) = (name, x)
 
     hayoo    = S.searchEngine "hayoo" "http://hayoo.fh-wedel.de/?query="
     hackage  = S.searchEngine "hackage" "http://hackage.haskell.org/packages/search?terms="
+    wikien   = S.searchEngine "wikien" "https://en.wikipedia.org/w/index.php?search="
+    wikide   = S.searchEngine "wikide" "https://de.wikipedia.org/w/index.php?search="
+    sof      = S.searchEngine "sof" "http://stackoverflow.com/search?q="
 
 {-
  | workspaceBar |              |infoBar |
