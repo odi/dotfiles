@@ -4,7 +4,8 @@ Config { commands = [ Run Date "%H:%M" "time" 30
                     , Run Network "enp8s0" ["-t","<fc=#c0ff3e>enp8s0</fc>"] 10
                     , Run Wireless "wlp2s0" ["-t","<fc=#c0ff3e>wlp2s0</fc>:<fc=#ff34b3><essid></fc>"] 10
                     , Run Com "notmuch" ["count","tag:unread"] "nmunread" 10
-                    , Run Com "notmuch" ["count","tag:flagged"] "nmflagged" 10
+                    , Run Com "notmuch" ["count","tag:todo"] "nmflagged" 10
+		    , Run Com "notmuch" ["count","tag:review"] "nmreview" 10
                     , Run BatteryP ["BAT0"] ["-t","Batt(<acstatus>): <left>%"] 10
                     , Run Volume "default" "Master" ["-t","Vol: <volume>%"] 10
                     ]
@@ -12,7 +13,7 @@ Config { commands = [ Run Date "%H:%M" "time" 30
             \%default:Master% • \
             \%battery% • \
             \%enp8s0%%wlp2s0wi% • \
-            \<fc=#00ced1>%nmunread%</fc>❘<fc=#ff6347>%nmflagged%</fc> • \
+            \<fc=#00ced1>%nmunread%</fc>❘<fc=#ff6347>%nmflagged%</fc>❘<fc=#228b22>%nmreview%</fc> • \
             \%date% • <fc=#1e90ff>[%week%]</fc> • <fc=#fff>%time%</fc> "
        , font = "xft:monospace:pixelsize=14:weight=normal"
        }
