@@ -37,3 +37,9 @@
 		    :weight 'normal
 		    :foreground nil
 		    :inherit font-lock-string-face)
+
+;; ## org-mode
+(setq org-todo-keyword-faces
+      (quote (("NEXT" :foreground "blue" :weight bold)
+	      ("WAIT" :foreground "orange" :weight bold)
+	      ("HOLD" :foreground "magenta" :weight bold))))

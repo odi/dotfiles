@@ -37,7 +37,7 @@
 (add-to-list 'load-path "~/.emacs.d/elpa/helm-swoop-20150209.806")
 (add-to-list 'load-path "~/.emacs.d/elpa/haskell-mode-20150222.908")
 (add-to-list 'load-path "~/.emacs.d/elpa/jabber-20150211.1330")
-(add-to-list 'load-path "~/.emacs.d/elpa/bbdb-20140830.2031")
+;;(add-to-list 'load-path "~/.emacs.d/elpa/bbdb-20140830.2031")
 (add-to-list 'load-path "~/.emacs.d/elpa/projectile-20150223.8")
 (add-to-list 'load-path "~/.emacs.d/elpa/helm-projectile-20150222.312")
 (add-to-list 'load-path "~/.emacs.d/elpa/dash-20141220.1452")
@@ -104,7 +104,7 @@
 ;; It uses a shell script which loads a new firefox-window with
 ;; the url under the point.
 ;; `firefox-nw.sh' just opens an url in a new window.
-(setq browse-url-browser-function 'browse-url-generic)
+(setq browse-url-browser-function 'browse-url-default-browser)
 (setq browse-url-generic-program "conkeror")
 
 ;; ## helm
@@ -310,17 +310,17 @@
   :bind (("C-c m" . magit-status)))
 
 ;; ## bbdb
-(use-package bbdb
-  :ensure bbdb
-  :init
-  (progn
-    (bbdb-initialize))
-  :config
-  (progn
-    (setq bbdb-complete-mail-allow-cycling t)
-    (setq bbdb-pop-up-window-size 10)
-    (setq bbdb-pop-up-layout nil)
-    (setq bbdb-phone-style nil)))
+;; (use-package bbdb
+;;   :ensure bbdb
+;;   :init
+;;   (progn
+;;     (bbdb-initialize))
+;;   :config
+;;   (progn
+;;     (setq bbdb-complete-mail-allow-cycling t)
+;;     (setq bbdb-pop-up-window-size 10)
+;;     (setq bbdb-pop-up-layout nil)
+;;     (setq bbdb-phone-style nil)))
 
 ;; ## switch-window
 ;; - deactivated C-, because of conflicting with org-mode
@@ -357,40 +357,118 @@
 (setq org-time-clocksum-format
       '(:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t))
 (setq org-todo-keywords
-      '((sequence "TODO" "NEXT" "|" "DONE" "CANC")))
+      '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
+	(sequence "WAIT(w@/!)" "HOLD(h@/!)" "|" "CANC(c@)")))
+
+;; set auto-fill for org-mode buffers
+(add-hook 'org-mode-hook 'auto-fill-mode)
+
+;; number of shown days in default agenda view
+(setq org-agenda-span 'day)
+
+;; add a :LOGBOOK: drawer for clocking and logging
+(setq org-clock-into-drawer t)
+(setq org-log-into-drawer t)
 
 ;; ## org-contacts
 (require 'org-contacts)
-(setq org-contacts-files "~/wiki/Contacts.org")
+(setq org-contacts-files '("~/wiki/Contacts.org"))
+(setq org-contacts-icon-use-gravatar nil)
+(setq org-contacts-birthday-format "%l (%y)")
+(setq org-link-abbrev-alist
+      '(("contact" . "~/wiki/Contacts.org::/\*.*%s/")))
+
+(setq org-show-entry-below t)
+(setq org-show-siblings t)
+(setq org-show-hierarchy-above t)
+(setq org-show-following-heading t)
 
 ;; ## org-mode key bindings
 (bind-key "C-c a" 'org-agenda)
 (bind-key "C-c c" 'org-capture)
 (bind-key "C-c o" (lambda ()
 		    (interactive)
-		    (find-file "~/wiki/notes/Notes.org")))
+		    (find-file "~/wiki/org/Notes.org")))
 (bind-key "C-c C-w" 'org-refile) ;; C-u C-c C-w to jump to heading
 
+;; define my project files
+(setq org-project-files
+      '("~/wiki/org/work/TSA.org" ;; TODO: move it to projects
+	"~/wiki/org/projects/Scouts.org"
+	"~/wiki/org/projects/OrgWorkflow.org"))
+
+;; define my agenda-files
+(setq org-agenda-files
+      (append '("~/wiki/org/Anniversaries.org"
+		"~/wiki/org/Diary.org"
+		"~/wiki/org/Notes.org"
+		) org-project-files))  ;; all projects to my agenda
+
 ;; ## org-refile
-(setq org-refile-targets '((org-agenda-files . (:maxlevel . 3))))
+(setq org-refile-targets '((nil :maxlevel . 6)
+			   (org-agenda-files :maxlevel . 6)))
+(setq org-refile-use-outline-path t)
+(setq org-refile-allow-creating-parent-nodes t)
+(setq org-refile-target-verify-function
+      '(lambda ()
+	 (not (member (nth 2 (org-heading-components)) org-done-keywords))))
+(setq org-outline-path-complete-in-steps nil)
 
 ;; ## org-mode agenda
-(setq org-agenda-files
-      '("~/wiki/org/work/TSA.org"      ;; primary employer
-	;; TODO move Links to org/Links.org
-	"~/wiki/Links.org"             ;; collection of links
-	"~/wiki/org/Anniversaries.org"
-	"~/wiki/org/Diary.org"))
+(setq org-agenda-compact-blocks t)
+
+;; define stuck projects
+(setq org-tags-exclude-from-inheritance '("project" "recipe"))
+(setq org-stuck-projects
+      '("+project/-DONE-CANC" ("NEXT") nil ""))
+
 (setq org-agenda-custom-commands
-      '(("L" . "Links")
-	("Ll" "Links for reading"
+      '(("@" . "Links")
+	("@l" "Links for reading"
 	 ((todo "TODO"
 		((org-agenda-files '("~/wiki/Links.org"))
 		 (org-agenda-overriding-header "Links for reading")))))
-	("N" "Quicknotes"
+	("H" "Habits" tags-todo "STYLE=\"habit\""
+	 ((org-agenda-overriding-header "Habits")
+	  (org-agenda-sorting-strategy
+	   '(todo-state-down effort-up category-keep))))
+	("N" . "Notes")
+	("Nr" "notes to refile"
 	 ((todo "TODO"
-		((org-agenda-files '("~/wiki/notes/Notes.org"))
-		 (org-agenda-overriding-header "Quicknotes")))))))
+		((org-agenda-files '("~/wiki/org/Notes.org"))
+		 (org-agenda-overriding-header "Notes")))))
+	("Nn" "next tasks"
+	 ((todo "NEXT"
+		((org-agenda-overriding-header "Next Tasks:")))))
+	("Ns" "stuck projects"
+	 ((stuck ""
+		 ((org-agenda-files org-project-files)
+		  (org-agenda-overriding-header "List of stuck projects:")))))
+	("Nw" "waiting tasks"
+	 ((todo "WAIT"
+		((org-agenda-overriding-header "Waiting Tasks:")))))
+	("R" . "Recipes")
+	("Rl" "list all Recipes"
+	 ((todo "COCKED"
+		((org-agenda-files '("~/wiki/Recipes.org"))
+		 (org-agenda-sorting-strategy '(tsia-up))
+;;		 (org-agenda-prefix-format " %s %T")
+		 (org-agenda-overriding-header "List of all Recipes")))))
+	("O" "Agenda verbose overview"
+	 ((agenda "" nil)
+	  (todo "TODO"
+		((org-agenda-files '("~/wiki/org/Notes.org"))
+		 (org-agenda-overriding-header "Tasks to Refile:")))
+	  (todo "NEXT"
+		((org-agenda-overriding-header "Next Tasks:")))
+	  (stuck ""
+		 ((org-agenda-files org-project-files) ;; look only in my projects
+		  (org-agenda-overriding-header "List of stuck projects:")))
+	  (tags-todo "+project"
+		     ((org-agenda-files org-project-files)
+		      (org-agenda-overriding-header "List of all projects:")))
+	  (todo "WAIT|HOLD"
+		((org-agenda-overriding-header "Waiting and Postponed Tasks:")))))))
 
 ;; ## org-mode capture
 (setq org-capture-templates
@@ -413,9 +491,11 @@
 	("a" "Action"
 	 entry (file+headline "~/wiki/org/Diary.org" "Actions")
 	 "** %?\n")
-	("n" "Quicknote"
-	 ;; TODO: move Notes.org to org/Notes.org
-	 entry (file "~/wiki/notes/Notes.org")
+	("q" "Quickentry"
+	 entry (file "~/wiki/org/Notes.org")
+	 "* %?\n")
+	("n" "Notes"
+	 entry (file "~/wiki/org/Notes.org")
 	 "* TODO %?\n :PROPERTIES:\n :CREATED: %^U\n :END:")))
 
 ;; ## paradox
