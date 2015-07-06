@@ -12,8 +12,13 @@ fpath=(${HOME}/.zfunc "${fpath[@]}")
 # set default editor
 export EDITOR="/usr/bin/emacsclient -c -a 'emacs'"
 
+# set nix_path
+# see http://lists.science.uu.nl/pipermail/nix-dev/2015-February/016132.html
+# to use unstable-channel for `nix-env -f ~/conf/packs.nix ...`
+export NIX_PATH="nixpkgs=/nix/var/nix/profiles/per-user/odi/channels/nixpkgs"
+
 # use my own colors
-eval `dircolors ${HOME}/conf/colors`
+# eval `dircolors ${HOME}/conf/colors`
 
 # set zsh options
 # see zshoptions
@@ -36,15 +41,16 @@ SAVEHIST=10000			# how much entries will be saved in history
 autoload -U colors && colors     # load color
 autoload -Uz vcs_info            # vcs informations
 autoload -U compinit && compinit # activates completion
-autoload -Uz misc && misc        # my misc functions from ~/.zfunc
+#autoload -Uz misc && misc        # my misc functions from ~/.zfunc
 
 # stylings
 # version control systems
-zstyle ':vcs_info:*'    enable git darcs     # I use only git and darcs
-zstyle ':vcs_info:*'    formats "(%b)"
+zstyle ':vcs_info:*'    enable git
+zstyle ':vcs_info:*'    formats "%{$fg_bold[yellow]%}(%b)%{$reset_color%}"
 zstyle ':vcs_info:git*' check-for-changes true
-zstyle ':vcs_info:git*' stagedstr '•'        # activate with %c
-zstyle ':vcs_info:git*' unstagedstr '✖'      # activate with %u
+zstyle ':vcs_info:git*' stagedstr 'A'        # activate with %c
+zstyle ':vcs_info:git*' unstagedstr 'M'      # activate with %u
+#zstyle ':vcs_info:git*+set-message:*' hooks git-untracked
 # completions
 zstyle ':completion:*' menu select
 zstyle ':completion:*' group-name ''
@@ -53,6 +59,14 @@ zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,%mem,cputime,cmd'
 zstyle ':completion:*:complete:*' rehash true
 zstyle ':completion:*:descriptions' format $'\e[0;46;30m%d\e[0m'
+
+# hooks
+# +vi-git-untracked() {
+#   if [[ $(git rev-parse --is-inside-work-tree 2> /dev/null) == 'true' ]] && \
+#   [[ $(git ls-files --other --directory --exclude-standard | sed q | wc -l | tr -d ' ') == 1 ]] ; then
+#   hook_com[unstaged]+='%{$fg[red]%}??'
+# fi
+# }
 
 # aliases
 alias ls='ls --color'
@@ -76,8 +90,10 @@ alias 1='cd -0'
 
 # prompt
 # calculate width of the terminal with $(echo $COLUMNS/2 | bc)
-PROMPT="%(!.%{$fg_bold[red]%}.%{$fg_bold[green]%})[%n@%m %$(echo $COLUMNS/2 | bc)<..<%~%<<]"$'\n'"%# %{$reset_color%}%"
-RPROMPT=$'%{$fg_bold[magenta]%}$(cabal_sandbox) %{$fg_bold[yellow]%}${vcs_info_msg_0_}%(?..%{$fg[red]%}%?)%{$reset_color%}%'
+# PROMPT="%(!.%{$fg_bold[red]%}.%{$fg_bold[green]%})[%n@%m %$(echo $COLUMNS/2 | bc)<..<%~%<<] %{$fg_bold[yellow]%}"$'\n'"%# %{$reset_color%}"
+PROMPT="%{$fg_bold[green]%}[%n@%m %$(echo $COLUMNS/2 | bc)<..<%~%<<] "$'\n'"%# %{$reset_color%}"
+# RPROMPT=$'%{$fg_bold[magenta]%}$(cabal_sandbox) %{$fg_bold[yellow]%}${vcs_info_msg_0_}%(?..%{$fg[red]%}%?)%{$reset_color%}%'
+RPROMPT=$'${vcs_info_msg_0_}'
 
 # call function before drawing the prompts
 precmd () {
@@ -100,7 +116,7 @@ cabal_sandbox () {
 ptop () { top -p $(pgrep -d, $1) 2>/dev/null }
 
 # open file in emacs as root
-E () { emacsclient -c -a 'emacs' "/sudo:root@localhost:$1" }
+#E () { emacsclient -c -a 'emacs' "/sudo:root@localhost:$1" }
 
 # pretty print json
 pp-json () { cat - | python -mjson.tool }
@@ -108,3 +124,20 @@ pp-json () { cat - | python -mjson.tool }
 # set and unset title of term
 title () { export TITLE="=$1=" }
 untitle () { unset TITLE }
+
+# start and stop NixOS-VBox-VM
+#nixos-start () { VBoxManage startvm NixOS --type headless }
+#nixos-stop () { VBoxManage controlvm NixOS savestate }
+#nixos-connect () { ssh -p 2222 localhost }
+
+# create maildir-folders
+mkmaildir () { if [[ $# -ne 1; ]]; then echo "usage: $0 DIR" && return 1; else mkdir -p $1/cur $1/new $1/tmp; fi }
+
+# nix functions
+#nix-search () { nix-env -I ~ -qaP \* | grep $1 }
+nix-search () { nix-env -f "<nixpkgs>" -qaP \* | grep $1 }
+nix-update () { nix-channel --update && nix-env -f ~/conf/packs.nix -uA }
+nixos-update () { sudo nixos-rebuild switch --upgrade }
+
+sec-mount () { sudo cryptsetup luksOpen $1 secure && sudo mount /dev/mapper/secure /mnt/secure }
+sec-umount () { sudo umount /mnt/secure && sudo cryptsetup luksClose /dev/mapper/secure }
