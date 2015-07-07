@@ -18,7 +18,7 @@ export EDITOR="/usr/bin/emacsclient -c -a 'emacs'"
 export NIX_PATH="nixpkgs=/nix/var/nix/profiles/per-user/odi/channels/nixpkgs"
 
 # use my own colors
-# eval `dircolors ${HOME}/conf/colors`
+eval `dircolors ${HOME}/etc/colors`
 
 # set zsh options
 # see zshoptions
