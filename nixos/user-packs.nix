@@ -40,8 +40,8 @@ rec {
   # misc stuff
   misc = with pkgs; [
     acpi bc cloc jq youtube-dl skype xosd unzip zip xpdf gv
-    lsof sqlite notmuch asynk pidgin unetbootin nix-repl xlibs.xev
-    xlibs.xmodmap cryptsetup
+    lsof sqlite notmuch asynk pidgin unetbootin nix-repl
+    cryptsetup
   ];
 
   # haskell libraries and tools
@@ -69,6 +69,11 @@ rec {
   # tools for security
   securityTools = with pkgs; [
     gnupg gnutls
+  ];
+
+  # tools for X
+  xTools = with pkgs; [
+    xlibs.xev xlibs.xmodmap evemu evtest
   ];
 
   # collection of all defined groups

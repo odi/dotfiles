@@ -51,6 +51,8 @@
   services.xserver.xkbVariant = "nodeadkeys";
   services.xserver.synaptics.enable = true;
 
+  services.xserver.displayManager.desktopManagerHandlesLidAndPower = false;
+
   # Disable xterm as desktopManager.
   services.xserver.desktopManager.default = "";
   services.xserver.desktopManager.xterm.enable = false;
