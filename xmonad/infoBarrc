@@ -1,24 +1,16 @@
 Config { commands = [ Run Date "%H:%M" "time" 30
                     , Run Date "%V" "week" 3600
                     , Run Date "%a %b %d" "date" 3600
-                    , Run Network "enp0s25" ["-t","<fc=#c0ff3e>enp0s25</fc>"] 10
-                    , Run Wireless "wlp4s0" ["-t","<fc=#c0ff3e>wlp4s0</fc>:<fc=#ff34b3><essid></fc>"] 10
---		    , Run Mail [("p:", "~/mail/mail.private")]
---				"mailP"
---		    , Run Mail [("s:", "~/mail/mail.scouts")]
---		                "mailS"
---                    , Run Com "notmuch" ["count","tag:unread"] "nmunread" 10
---                    , Run Com "notmuch" ["count","tag:todo"] "nmflagged" 10
---	  	      , Run Com "notmuch" ["count","tag:review"] "nmreview" 10
-                    , Run BatteryP ["BAT0"] ["-t","Batt(<acstatus>): <left>%"] 10
+--                    , Run Network "enp0s25" ["-t","<fc=#c0ff3e>enp0s25</fc>"] 10
+                    , Run Wireless "wlp4s0" ["-t","<fc=#ff34b3><essid></fc>"] 10
+                    , Run BatteryP ["BAT0"] ["-t","<left>% <acstatus>", "--", "-O", "<fc=#c0ff3e>⬆</fc>", "-o", "<fc=#ff6347>⬇</fc>", "-i", "<fc=#ffc125>✘</fc>"] 10
+		    , Run DiskU [("/mnt/secure","<fc=#c0ff3e>✔</fc>(<usedp>%)")] [] 10
 --                    , Run Volume "default" "Master" ["-t","Vol: <volume>%"] 10
                     ]
        , template = "}{ \
---            \%default:Master% • \
-            \%battery% • \
-            \%enp0s25%%wlp4s0wi% • \
---            \<fc=#00ced1>%nmunread%</fc>❘<fc=#ff6347>%nmflagged%</fc>❘<fc=#228b22>%nmreview%</fc> • \
---	    \<fc=#00ced1>%mailP%</fc> <fc=#00ced1>%mailS%</fc> • \
-            \%date% • <fc=#1e90ff>[%week%]</fc> • <fc=#fff>%time%</fc> "
+         \%disku% • \
+         \%battery% • \
+         \%wlp4s0wi% • \
+         \%date% • <fc=#1e90ff>[%week%]</fc> • <fc=#fff>%time%</fc> "
        , font = "xft:monospace:pixelsize=14:weight=normal"
        }
