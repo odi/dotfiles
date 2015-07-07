@@ -40,6 +40,7 @@
   # services.openssh.enable = true;
 
   # Enable NTPD daemon.
+  time.timeZone = "Europe/Vienna";
   services.openntpd.enable = true;
 
   # Enable CUPS to print documents.
