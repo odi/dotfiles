@@ -61,20 +61,21 @@
 ;; load theme
 (load-file "~/etc/emacs/theme.el")
 
-;; load configuration for jabber and erc
+;; ## jabber, erc
 (load-file "~/etc/emacs/im_irc.el")
 
-;; load configuration for helm and helm-* submodules
+;; ## helm, helm-swoop, ...
 (load-file "~/etc/emacs/helm.el")
 
-;; load configuration for haskell
+;; ## haskell-mode
 (load-file "~/etc/emacs/haskell.el")
 
-;; load configuration for org-mode
+;; ## org-mode
 (load-file "~/etc/emacs/org.el")
 
-;; load library for nix-mode
+;; ## nix-mode
 (require 'nix-mode)
 
 ;; ## magit
 (require 'magit)
+(define-key global-map (kbd "C-c m") 'magit-status)
