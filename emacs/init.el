@@ -72,3 +72,6 @@
 
 ;; load configuration for org-mode
 (load-file "~/etc/emacs/org.el")
+
+;; load library for nix-mode
+(require 'nix-mode)
