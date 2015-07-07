@@ -34,7 +34,8 @@
 ;; my project files
 (setq org-project-files
       '("~/wiki/org/projects/OrgMode.org"
-	"~/wiki/org/projects/OS.org"))
+	"~/wiki/org/projects/OS.org"
+	"~/wiki/org/projects/RiseMain.org"))
 
 ;; define my agenda-files
 (setq org-agenda-files
