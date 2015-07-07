@@ -75,3 +75,6 @@
 
 ;; load library for nix-mode
 (require 'nix-mode)
+
+;; ## magit
+(require 'magit)

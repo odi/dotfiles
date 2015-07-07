@@ -22,7 +22,7 @@ rec {
 
   # all emacs packages from Ng
   emacsPackagesNg = with epkgsNg; [
-    haskell-mode helm helm-swoop ace-jump-mode
+    haskell-mode helm helm-swoop ace-jump-mode magit
   ];
 
   # all other emacs packages
