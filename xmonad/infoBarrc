@@ -11,6 +11,6 @@ Config { commands = [ Run Date "%H:%M" "time" 30
          \%disku% • \
          \%battery% • \
          \%wlp4s0wi% • \
-         \%date% • <fc=#1e90ff>[%week%]</fc> • <fc=#fff>%time%</fc> "
+         \%date% <fc=#1e90ff>[%week%]</fc> <fc=#fff>%time%</fc> "
        , font = "xft:monospace:pixelsize=14:weight=normal"
        }
