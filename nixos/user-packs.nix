@@ -49,10 +49,6 @@ rec {
     hlint ghc xmobar cabal-install
   ];
 
-  haskellPackagesRise = with hpkgs; [
-    rise-hslib rise-hslib-net rise-hslib-log rise-hslib-http
-  ];
-  
   haskellTools = with pkgs; [
     cabal2nix dzen2
   ];
