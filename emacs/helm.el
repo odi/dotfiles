@@ -14,3 +14,7 @@
 ;; ## helm-swoop
 (require 'helm-swoop)
 (global-set-key (kbd "C-c h s") 'helm-swoop)
+
+;; ## helm-projectile
+(require 'helm-projectile)
+(global-set-key (kbd "C-c h p") 'helm-projectile)
