@@ -1,0 +1,35 @@
+xterm*antialias:true
+xterm*faceName:DejaVu Sans Mono
+xterm*faceSize:13
+xterm*bellIsUrgent:true
+xterm*metaSendsEscape:true
+xterm*cursorBlink:true
+xterm*saveLines:1000
+
+! -- xterm colors
+! 1/9  ... red/bold red
+! 2/10 ... green/bold green
+! 3/11 ... yellow/bold yellow
+! 4/12 ... blue/bold blue
+! 5/13 ... magenta/bold magenta
+! 6/14 ... cyan/bold cyan
+
+xterm*background:#000000
+xterm*foreground:#ffffff
+xterm*color1:#ff6347
+xterm*color9:#ff6347
+xterm*color2:#c0ff3e
+xterm*color10:#c0ff3e
+xterm*color3:#ffc125
+xterm*color11:#ffc125
+xterm*color4:#1e90ff
+xterm*color12:#1e90ff
+xterm*color5:#ff34b3
+xterm*color13:#ff34b3
+xterm*color6:#00ced1
+xterm*color14:#00ced1
+
+! keyboard shortcuts for xterm
+xterm*charClass: 33:48,36-47:48,58-59:48,61:48,63-64:48,95:48,126:48
+xterm*VT100.Translations: #override \
+  Ctrl <Key>Y: insert-selection(PRIMARY, CUT_BUFFER0)
