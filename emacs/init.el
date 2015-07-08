@@ -50,6 +50,12 @@
 ;; default browser
 (setq browse-url-browser-function 'browse-url-chromium)
 
+;; load all my configurations which i'll not show to the public
+(load-file "~/etc/emacs/secure.el")
+
+;; email configurations
+(setq message-send-mail-function 'message-send-mail-with-sendmail)
+
 ;; ## ace-jump-mode
 (require 'ace-jump-mode)
 (define-key global-map (kbd "C-0") 'ace-jump-mode)
