@@ -10,7 +10,7 @@
 (define-key haskell-mode-map (kbd "C-c l") 'haskell-check)
 
 (setq compile-command "nix-shell --command 'cabal build'")
-(define-key haskell-mode-map (kbd "C-c m") 'compile)
+(define-key haskell-mode-map (kbd "C-c ,") 'compile)
 
 ;; call hoogle online w/ eww
 (defun eww-hoogle (str)
