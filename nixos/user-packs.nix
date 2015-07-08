@@ -40,10 +40,12 @@ rec {
 
   # misc stuff
   misc = with pkgs; [
-    acpi bc cloc jq youtube-dl skype xosd unzip zip xpdf gv
+    acpi bc cloc jq youtube-dl xosd unzip zip xpdf gv
     lsof sqlite notmuch asynk pidgin unetbootin nix-repl
     cryptsetup
   ];
+
+  unfreePackages = with pkgs; [ skype ];
 
   # haskell libraries and tools
   haskellPackages = with hpkgs; [
