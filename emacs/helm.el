@@ -10,6 +10,7 @@
 
 (global-set-key (kbd "C-x b") 'helm-buffers-list)
 (global-set-key (kbd "C-c h i") 'helm-imenu)
+(global-set-key (kbd "M-x") 'helm-M-x) ;; default execute-extended-command
 
 ;; ## helm-swoop
 (require 'helm-swoop)
@@ -18,6 +19,7 @@
 ;; ## helm-projectile
 (require 'helm-projectile)
 (global-set-key (kbd "C-c h p") 'helm-projectile)
+(global-set-key (kbd "C-c h g") 'helm-projectile-grep)
 
 ;; quickfix for helm+projectile error message
 ;; https://github.com/bbatsov/projectile/issues/358
