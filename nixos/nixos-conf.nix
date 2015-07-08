@@ -63,6 +63,22 @@
   services.xserver.windowManager.xmonad.enable = true;
   services.xserver.windowManager.xmonad.enableContribAndExtras = true;
 
+  # Postfix configuration
+  services.postfix = {
+    enable = true;
+    extraConfig = ''
+      inet_interfaces = loopback-only
+      sender_dependent_relayhost_maps = hash:/mnt/secure/sec/postfix/postfix_sender
+      smtp_sasl_auth_enable = yes
+      smtp_sasl_password_maps = hash:/mnt/secure/sec/postfix/postfix_sasl_passwd
+      smtp_sasl_security_options = noanonymous
+      smtp_sasl_tls_security_options = $smtp_sasl_security_options
+      smtp_sasl_mechanism_filter = plain, login
+      smtp_use_tls = yes
+      smtpd_tls_security_level = may
+    '';
+  };
+
   # Define some fonts.
   fonts = {
     fontconfig.antialias = true;
