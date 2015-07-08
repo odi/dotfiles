@@ -1,16 +1,14 @@
 Config { commands = [ Run Date "%H:%M" "time" 30
                     , Run Date "%V" "week" 3600
                     , Run Date "%a %b %d" "date" 3600
---                    , Run Network "enp0s25" ["-t","<fc=#c0ff3e>enp0s25</fc>"] 10
-                    , Run Wireless "wlp4s0" ["-t","<fc=#ff34b3><essid></fc>"] 10
+                    , Run Wireless "wlp4s0" ["-t","<fc=#ff34b3>❰<essid>❱</fc>"] 10
                     , Run BatteryP ["BAT0"] ["-t","<left>% <acstatus>", "--", "-O", "<fc=#c0ff3e>⬆</fc>", "-o", "<fc=#ff6347>⬇</fc>", "-i", "<fc=#ffc125>✘</fc>"] 10
 		    , Run DiskU [("/mnt/secure","<fc=#c0ff3e>✔</fc>(<usedp>%)")] [] 10
---                    , Run Volume "default" "Master" ["-t","Vol: <volume>%"] 10
                     ]
        , template = "}{ \
          \%disku% • \
-         \%battery% • \
-         \%wlp4s0wi% • \
+         \%battery% \
+         \%wlp4s0wi% \
          \%date% <fc=#1e90ff>[%week%]</fc> <fc=#fff>%time%</fc> "
        , font = "xft:monospace:pixelsize=14:weight=normal"
        }
