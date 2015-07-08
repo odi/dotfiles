@@ -85,6 +85,7 @@
 ;; ## magit
 (require 'magit)
 (define-key global-map (kbd "C-c m") 'magit-status)
+(setq magit-last-seen-setup-instructions "1.4.0")
 
 ;; ## projectile
 (require 'projectile)
