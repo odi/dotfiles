@@ -68,6 +68,10 @@ rec {
     gnupg gnutls
   ];
 
+  emailTools = with pkgs; [
+    procmail fetchmail
+  ];
+
   # tools for X
   xTools = with pkgs; [
     xlibs.xev xlibs.xmodmap evemu evtest
@@ -76,6 +80,7 @@ rec {
   # collection of all defined groups
   all = vcs ++ emacsAll ++ browsers ++ misc ++
         haskellPackages ++ haskellTools ++
-	imageTools ++ mediaTools ++ securityTools;
+	imageTools ++ mediaTools ++ securityTools ++
+	emailTools;
 }
    
