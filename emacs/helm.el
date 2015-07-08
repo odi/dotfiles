@@ -18,3 +18,7 @@
 ;; ## helm-projectile
 (require 'helm-projectile)
 (global-set-key (kbd "C-c h p") 'helm-projectile)
+
+;; quickfix for helm+projectile error message
+;; https://github.com/bbatsov/projectile/issues/358
+(defalias 'helm-buffers-match-function 'helm-buffers-list--match-fn)
