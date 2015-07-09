@@ -1,7 +1,7 @@
 Config { commands = [ Run Date "%H:%M" "time" 30
                     , Run Date "%V" "week" 3600
                     , Run Date "%a %b %d" "date" 3600
-                    , Run Wireless "wlp4s0" ["-t","<fc=#ff34b3>❰<essid>❱</fc>"] 10
+                    , Run Wireless "wlp4s0" ["-t","<fc=#ff34b3>»<essid>«</fc>"] 10
                     , Run BatteryP ["BAT0"] ["-t","<left>% <acstatus>", "--", "-O", "<fc=#c0ff3e>⬆</fc>", "-o", "<fc=#ff6347>⬇</fc>", "-i", "<fc=#ffc125>✘</fc>"] 10
 		    , Run DiskU [("/mnt/secure","<fc=#c0ff3e>✔</fc>(<usedp>%)")] [] 10
                     ]
