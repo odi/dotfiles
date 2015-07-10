@@ -29,10 +29,12 @@
 (cond
  ((string= system-name "rise-io")
   ;; set default font
-  (set-frame-font "DejaVu Sans Mono 13"))
+  (set-face-attribute 'default nil
+		      :font "DejaVu Sans Mono 13"))
  ((string= system-name "io")
   ;; set default font
-  (set-frame-font "DejaVu Sans Mono 15")))
+  (set-face-attribute 'default nil
+		      :font "DejaVu Sans Mono 15")))
 
 ;; yank content at point and from primary selection method
 (setq mouse-yank-at-point t)
