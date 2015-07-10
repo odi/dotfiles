@@ -1,8 +1,19 @@
-;; set background of the region
-(set-face-attribute 'region nil :background "lightgoldenrod2")
+;; defines two functions for light/dark theme
+;; these defines some variables in respect to their theme
 
-;; set active mode line
-;; default fg=black; bg=grey75
-(set-face-attribute 'mode-line nil
-		    :background "gray20"
-		    :foreground "gray75")
+;; set some useful configurations for a dark theme
+(defun odi/dark-theme ()
+  (interactive)
+  (set-face-attribute 'mode-line nil
+		      :background "gray75"
+		      :foreground "black"))
+
+;; set some useful configurations for a light theme
+(defun odi/light-theme ()
+  (interactive)
+  (set-face-attribute 'region nil
+		      :background "lightgoldenrod2")
+  ;; this is also the default value
+  (set-face-attribute 'mode-line nil
+		      :background "gray20"
+		      :foreground "gray75"))
