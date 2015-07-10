@@ -98,4 +98,11 @@
     shell = "${pkgs.zsh}/bin/zsh";
   };
 
+  # Define a test-user
+  users.extraUsers.test = {
+    isNormalUser = true;
+    home = "/home/test";
+    description = "A user for testing";
+  };
+
 }
