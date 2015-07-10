@@ -14,6 +14,7 @@ let
   hpkgs   = pkgs.haskellPackages;
   epkgsNg = pkgs.emacs24PackagesNg;
   epkgs   = pkgs.emacs24Packages;
+  ppkgs   = pkgs.python27Packages;
 in
 
 rec {
@@ -42,7 +43,7 @@ rec {
   misc = with pkgs; [
     acpi bc cloc jq youtube-dl xosd unzip zip xpdf gv
     lsof sqlite notmuch asynk pidgin unetbootin nix-repl
-    cryptsetup
+    cryptsetup libreoffice
   ];
 
   unfreePackages = with pkgs; [ skype ];
@@ -72,6 +73,10 @@ rec {
 
   emailTools = with pkgs; [
     procmail fetchmail
+  ];
+
+  pythonPackages = with pkgs; [
+    python
   ];
 
   # tools for X
