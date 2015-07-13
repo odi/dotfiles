@@ -65,6 +65,18 @@
 ;; ## bbdb
 (require 'bbdb-loaddefs)
 (require 'bbdb)
+(setq bbdb-file "~/.bbdb")
+(add-hook 'message-setup-hook 'bbdb-mail-aliases)
+
+;; from: https://github.com/tohojo/bbdb-vcard
+;; be sure to check out bbdb-vcard to ~/.emacs.d/elisp
+(add-to-list 'load-path "~/.emacs.d/elisp/bbdb-vcard")
+(require 'bbdb-vcard)
+(setq bbdb-default-dir "~/data/vcards/")
+;; TODO: xmpp -> X-JABBER
+(setq bbdb-vcard-export-translation-table
+      '(("Mobile" . "cell")
+	("Work" . "work")))
 
 ;; load theme
 (load-file "~/etc/emacs/theme.el")
