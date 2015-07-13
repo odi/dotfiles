@@ -42,8 +42,8 @@ rec {
   # misc stuff
   misc = with pkgs; [
     acpi bc cloc jq youtube-dl xosd unzip zip xpdf gv
-    lsof sqlite notmuch asynk pidgin unetbootin nix-repl
-    cryptsetup libreoffice
+    lsof sqlite notmuch unetbootin nix-repl
+    cryptsetup libreoffice jmtpfs usbutils androidsdk_4_4
   ];
 
   unfreePackages = with pkgs; [ skype ];
