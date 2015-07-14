@@ -29,13 +29,6 @@
       '(jabber-message-echo    ;; put notification message to echo area
 	jabber-message-scroll  ;; ?
 	odi/xmonad-notify))    ;; set urgendcy-flag of window-manager
-(setq jabber-account-list
-      '(("odi@jabber.ccc.de"
-	 (:network-server . "jabber.ccc.de")
-	 (:connection-type . ssl))
-	("oliver.dunkl@rise-world.com"
-	 (:network-server . "chat.rise-world.com")
-	 (:connection-type . ssl))))
 
 ;; sent messages to `io` if all of them are available
 (cond
