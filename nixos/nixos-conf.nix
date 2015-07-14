@@ -16,6 +16,8 @@
   boot.loader.grub.version = 2;
   boot.loader.grub.device = "/dev/sda";
 
+  hardware.pulseaudio.enable = true;
+
   networking.wireless.enable = true;  # Enables wireless.
 
   # Select internationalisation properties.
