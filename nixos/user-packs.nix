@@ -42,8 +42,8 @@ rec {
   # misc stuff
   misc = with pkgs; [
     acpi bc cloc jq youtube-dl xosd unzip zip xpdf gv
-    lsof sqlite notmuch unetbootin nix-repl
-    cryptsetup libreoffice jmtpfs usbutils androidsdk_4_4
+    lsof notmuch unetbootin nix-repl sqlite
+    cryptsetup libreoffice jmtpfs usbutils
   ];
 
   unfreePackages = with pkgs; [ skype ];
@@ -81,7 +81,7 @@ rec {
 
   # tools for X
   xTools = with pkgs; [
-    xlibs.xev xlibs.xmodmap evemu evtest
+    xlibs.xev xlibs.xmodmap evemu evtest xlockmore
   ];
 
   # collection of all defined groups
