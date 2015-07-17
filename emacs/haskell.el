@@ -12,6 +12,14 @@
 (setq compile-command "nix-shell --command 'cabal build'")
 (define-key haskell-mode-map (kbd "C-c ,") 'compile)
 
+
+(setq haskell-indentation-layout-offset 4)
+(setq haskell-indentation-starter-offset 4)
+(setq haskell-indentation-left-offset 4)
+(setq haskell-indentation-ifte-offset 4)
+(setq haskell-indentation-where-pre-offset 4)
+(setq haskell-indentation-where-post-offset 4)
+
 ;; call hoogle online w/ eww
 (defun eww-hoogle (str)
   (interactive "sEnter hoogle search string: ")
