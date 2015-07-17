@@ -1,4 +1,4 @@
-# -*- zshrc -*-
+# -*- sh -*-
 # written by Oliver Dunkl
 
 # set PATH
@@ -87,6 +87,7 @@ alias G='grep --color -i'
 alias h='history'
 alias feh='feh -F'
 alias 1='cd -0'
+alias gcal='gcalcli'
 
 # prompt
 # calculate width of the terminal with $(echo $COLUMNS/2 | bc)
