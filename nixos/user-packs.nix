@@ -76,7 +76,7 @@ rec {
   ];
 
   pythonPackages = with pkgs; [
-    python
+    python python27Packages.pip python2nix
   ];
 
   # tools for X
