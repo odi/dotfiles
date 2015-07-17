@@ -130,6 +130,7 @@ keys_ (XConfig {modMask = modm}) = M.fromList $
   , ((modm, xK_BackSpace), focusUrgent)
   , ((modm, xK_q), spawn "pkill dzen2; pkill xmobar" >> restart "xmonad" True)
   , ((modm .|. shiftMask, xK_l), spawn "lock.sh")
+  , ((modm, xK_s), prompt ("xterm" ++ " -e") promptConf)
     -- get keysym from `xev'
 --  , ((0, 0x1008ff13), spawn "amixer sset Master 2%+")  -- increase volume
   , ((0, 0x1008ff13), spawn "avol.sh inc")  -- increase volume
