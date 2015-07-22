@@ -22,7 +22,7 @@
 (prefer-coding-system 'utf-8)  ;; use UTF-8 as my prefered coding system
 
 ;; set title format of the frames
-(setq frame-title-format '("" "emacs → %b"))
+(setq frame-title-format '("" "emacs :: %b"))
 
 ;; do host specific configurations
 ;; currently i use following hosts: rise-io, io
@@ -104,3 +104,11 @@
 ;; ## projectile
 (require 'projectile)
 (projectile-global-mode)
+
+;; ## yasnippet
+;; TODO: remove this if yasnippet is in nixpkgs
+(add-to-list 'load-path "~/.emacs.d/elisp/yasnippet")
+(require 'yasnippet)
+(setq yas-snippet-dirs
+      '("~/etc/emacs/yasnippet"))
+(yas-global-mode 1)
