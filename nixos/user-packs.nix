@@ -43,7 +43,8 @@ rec {
   misc = with pkgs; [
     acpi bc cloc jq youtube-dl xosd unzip zip xpdf gv
     lsof notmuch unetbootin nix-repl sqlite
-    cryptsetup libreoffice jmtpfs usbutils
+    cryptsetup libreoffice jmtpfs usbutils idutils
+    # calibre
   ];
 
   unfreePackages = with pkgs; [ skype ];
