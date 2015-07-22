@@ -8,7 +8,8 @@
 
 ;; faces for my keywords
 (setq org-todo-keyword-faces
-      (quote (("NEXT" :foreground "blue" :weight bold)
+      (quote (("TODO" :foreground "red" :weight bold)
+	      ("NEXT" :foreground "blue" :weight bold)
               ("WAIT" :foreground "orange" :weight bold)
               ("HOLD" :foreground "magenta" :weight bold))))
 
@@ -20,7 +21,7 @@
 
 ;; add a :LOGBOOK: drawer for clocking and logging
 (setq org-clock-into-drawer t)
-(setq org-log-into-drawer t)
+(setq org-log-into-drawer nil)
 
 (setq org-show-entry-below t)
 (setq org-show-siblings t)
@@ -136,3 +137,13 @@
 	("n" "Notes"
 	 entry (file "~/wiki/org/Notes.org")
 	 "* TODO %?\n :PROPERTIES:\n :CREATED: %^U\n :END:")))
+
+;; configure the clockreport format
+;; see: http://orgmode.org/manual/The-clock-table.html
+(setq org-agenda-clockreport-parameter-plist
+      '(:link t :maxlevel 2 :fileskip0 t :compact t))
+
+;; add support for magit-links
+;; https://github.com/emacsattic/org-magit
+(add-to-list 'load-path "~/.emacs.d/elisp/org-magit")
+(require 'org-magit)
