@@ -10,7 +10,7 @@ path=(~/bin ~/.cabal/bin $path)
 fpath=(${HOME}/.zfunc "${fpath[@]}")
 
 # set default editor
-export EDITOR="/usr/bin/emacsclient -c -a 'emacs'"
+export EDITOR="emacsclient -c -a 'emacs'"
 
 # set nix_path
 # see http://lists.science.uu.nl/pipermail/nix-dev/2015-February/016132.html
@@ -88,6 +88,7 @@ alias h='history'
 alias feh='feh -F'
 alias 1='cd -0'
 alias gcal='gcalcli'
+alias ne='nix-env -f ~/nixpkgs'
 
 # prompt
 # calculate width of the terminal with $(echo $COLUMNS/2 | bc)
@@ -140,5 +141,13 @@ nix-search () { nix-env -f "<nixpkgs>" -qaP \* | grep $1 }
 nix-update () { nix-channel --update && nix-env -f ~/conf/packs.nix -uA }
 nixos-update () { sudo nixos-rebuild switch --upgrade }
 
-sec-mount () { sudo cryptsetup luksOpen $1 secure && sudo mount /dev/mapper/secure /mnt/secure }
+# search for packages in local nixpkgs
+nes () { nix-env -f ~/nixpkgs -qaP \* | grep $1 --color }
+neg () { lid -f ~/.nixpkgs.idx -R grep -r $1 | grep $1 --color }
+
+# execute command in nix-shell
+# e.g. nsc cabal build
+nsc () { nix-shell --command "$*" }
+
+sec-mount () { sudo cryptsetup luksOpen /dev/disk/by-uuid/58f33bf5-5e6e-4cee-a2b8-1b8138676cf9 secure && sudo mount /dev/mapper/secure /mnt/secure }
 sec-umount () { sudo umount /mnt/secure && sudo cryptsetup luksClose /dev/mapper/secure }
