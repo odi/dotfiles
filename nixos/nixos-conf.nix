@@ -33,6 +33,8 @@
     wget
   ];
 
+  security.sudo.wheelNeedsPassword = false;
+
   # List services that you want to enable:
 
   # Enable zsh
