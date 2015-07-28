@@ -17,6 +17,7 @@
 (display-time-mode t)  ;; display time/date in modeline
 (mouse-wheel-mode -1)  ;; disable mouse wheel
 (show-paren-mode t)    ;; show fitting braces
+(winner-mode t)        ;; activate winner-mode
 
 ;; prefered coding system
 (prefer-coding-system 'utf-8)  ;; use UTF-8 as my prefered coding system
@@ -50,12 +51,14 @@
 (setq vc-make-backup-files t)
 
 ;; default browser
-(setq browse-url-browser-function 'browse-url-chromium)
+(setq browse-url-browser-function 'browse-url-chromium
+      browse-url-new-window-flag t)
 
 ;; load all my configurations which i'll not show to the public
 (load-file "~/etc/emacs/secure.el")
 
 ;; email configurations
+(require 'gnus)
 (setq message-send-mail-function 'message-send-mail-with-sendmail)
 
 ;; ## ace-jump-mode
@@ -77,9 +80,6 @@
 (setq bbdb-vcard-export-translation-table
       '(("Mobile" . "cell")
 	("Work" . "work")))
-
-;; load theme
-(load-file "~/etc/emacs/theme.el")
 
 ;; ## jabber, erc
 (load-file "~/etc/emacs/im_irc.el")
@@ -112,3 +112,17 @@
 (setq yas-snippet-dirs
       '("~/etc/emacs/yasnippet"))
 (yas-global-mode 1)
+
+;; ## backups-mode
+;; https://github.com/chadbraunduin/backups-mode
+(add-to-list 'load-path "~/.emacs.d/elisp/backups-mode")
+(require 'backups-mode)
+(backups-mode-start)
+
+;; ## highlight-symbol
+(add-to-list 'load-path "~/.emacs.d/elisp/highlight-symbol.el")
+(require 'highlight-symbol)
+
+;; load theme
+;; this should be the last 
+(load-file "~/etc/emacs/theme.el")
