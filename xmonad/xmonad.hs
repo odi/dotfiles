@@ -1,4 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE FlexibleContexts  #-}
+
 {-
 TODO:
  - get width of Screen for logHook
@@ -14,11 +16,18 @@ TODO:
 -- http://xmonad.org/xmonad-docs/xmonad/index.html
 -- http://xmonad.org/xmonad-docs/xmonad-contrib/index.html
 
-import           XMonad
+import           Data.Char                       (isLetter)
+import           Data.List                       (intercalate)
+import           Text.Regex.Posix                ((=~))
 
-import qualified XMonad.Actions.Search   as S  (Browser, SearchEngine(..),
-                                                search, hoogle, google, hackage, isPrefixOf,
-                                                searchEngine)
+import           XMonad                          
+
+import qualified XMonad.Actions.Search   as S    (Browser, SearchEngine(..),
+                                                  search, hoogle, google, hackage, isPrefixOf,
+                                                  searchEngine)
+import           XMonad.Actions.CopyWindow       (copyWindow)
+import           XMonad.Actions.WindowBringer    (windowMap, bringWindow)
+import           XMonad.StackSet         as SS   (focusWindow)
 
 import           XMonad.Hooks.DynamicLog
 import           XMonad.Hooks.ManageDocks
@@ -30,7 +39,6 @@ import           XMonad.Prompt.AppLauncher
 import           XMonad.Prompt.Input
 import           XMonad.Prompt.XMonad
 import           XMonad.Prompt.Shell
-import           XMonad.Prompt.Window
 
 import           XMonad.Util.Font
 import           XMonad.Util.Loggers
@@ -38,7 +46,7 @@ import           XMonad.Util.Run
 import           XMonad.Util.Replace
 
 import qualified Data.Map as M
-import           Data.Maybe (fromMaybe)
+import           Data.Maybe (fromMaybe, mapMaybe)
 import           GHC.IO.Handle.Types
 
 import           Control.Applicative
@@ -53,7 +61,7 @@ borderColor'  = cGrey
 modMask'      = mod4Mask
 editor        = "emacsclient -c -a \"emacs\" "
 dzenExec      = "dzen2"
-xmobarExec    = "xmobar -f " ++ (defaultFont 16 "normal")
+xmobarExec    = "xmobar -f " ++ defaultFont 16 "normal"
 browser       = "conkeror"
 placesDB      = "/home/odi/.conkeror.mozdev.org/conkeror/l65w5mjs.odi/places.sqlite"
 
@@ -110,13 +118,13 @@ layoutHook' = avoidStruts $ layoutHook defaultConfig
 
 -- use default keys and overwrite it with keys_
 keys' :: XConfig Layout -> M.Map (KeyMask, KeySym) (X ())
-keys' = \c -> keys_ c `M.union` keys defaultConfig c
+keys' c = keys_ c `M.union` keys defaultConfig c
 
 keys_ :: XConfig Layout -> M.Map (KeyMask, KeySym) (X ())
-keys_ (XConfig {modMask = modm}) = M.fromList $
-  [ ((modm, xK_Return), spawn terminal')
-  , ((modm, xK_g), windowPromptGoto promptConf)
-  , ((modm, xK_b), windowPromptBring promptConf)
+keys_ (XConfig {modMask = modm}) = M.fromList
+  [ ((modm, xK_Return),       spawn terminal')
+  , ((modm, xK_g),            windowPromptGoto_ promptConf)
+--  , ((modm, xK_b), windowPromptBring promptConf)
     -- dirty hack of switching to firefox/vimperator windows
 --  , ((modm, xK_v), windowPromptGotoPropClass "conkeror" promptConf)
   , ((modm, xK_u), sendMessage $ ToggleStrut U)
@@ -139,6 +147,50 @@ keys_ (XConfig {modMask = modm}) = M.fromList $
   ]
 
 chromium = "/home/odi/.nix-profile/bin/chromium"
+
+--------------------------------------------------------------------------------
+-- Prompts
+
+-- This is more or less equal to the `XMonad.Prompt.Window` except that we
+-- use fuzzy matching for completing search predicates.
+data WindowPrompt = Goto | Bring
+instance XPrompt WindowPrompt where
+    showXPrompt Goto      = "Go to window: "
+    showXPrompt Bring     = "Bring window: "
+    commandToComplete _ c = c
+    nextCompletion      _ = getNextCompletion
+
+doPrompt :: WindowPrompt -> Bool -> XPConfig -> X ()
+doPrompt t fuzzy conf = do
+    a <- case t of
+        Goto      -> fmap gotoAction windowMap
+        Bring     -> fmap bringAction windowMap
+    wm <- windowMap
+    mkXPrompt t conf (compList wm) a
+    where
+        winAction a m    = flip whenJust (windows . a) . flip M.lookup m
+        gotoAction       = winAction SS.focusWindow
+        bringAction      = winAction bringWindow
+
+        compList m s = if fuzzy
+                       then return $ mkComplListFuzzy (map fst . M.toList $ m) s
+                       else return . filter (searchPredicate conf s) . map fst . M.toList $ m 
+
+windowPromptGoto, windowPromptBring :: XPConfig -> X ()
+windowPromptGoto  = doPrompt Goto False
+windowPromptBring = doPrompt Bring False
+
+windowPromptGoto_, windowPromptBring_ :: XPConfig -> X ()
+windowPromptGoto_  = doPrompt Goto True
+windowPromptBring_ = doPrompt Bring True
+
+-- | Function for fuzzy pattern matching
+-- TODO: make it not case sensitive
+mkComplListFuzzy :: [String] -> String -> [String]
+mkComplListFuzzy ss p = mapMaybe (\x -> match x (filter isLetter p)) ss
+  where
+    fuzzyMatch s p = s =~ (intercalate ".*?" $ map (:[]) p)
+    match s p      = if fuzzyMatch s p then Just s else Nothing
 
 --------------------------------------------------------------------------------
 -- Search Engines
@@ -166,12 +218,13 @@ instance XPrompt Search where
 searchEnginePrompt :: XPConfig                          -- ^ xpconfig to use
                    -> S.Browser                         -- ^ which browser to use
                    -> S.SearchEngine                    -- ^ default Search-Engine
-                   -> M.Map (String) (S.SearchEngine)   -- ^ map of: name -> search-engine
+                   -> M.Map String S.SearchEngine       -- ^ map of: name -> search-engine
                    -> X ()
-searchEnginePrompt config browser engine sem = do
+searchEnginePrompt config browser engine sem =
     mkXPrompt SearchEngine config complF fireSearchEngine
     where
         complF = historyCompletionP ("Search-Engine:" `S.isPrefixOf`)
+
         fireSearchEngine :: String -> X ()
         fireSearchEngine name = promptSearchBrowser config browser $
                                    fromMaybe engine (M.lookup name sem)
@@ -185,7 +238,7 @@ promptSearchBrowser config browser (S.SearchEngine name site) =
         complF name = historyCompletionP (("Search [" ++ name) `S.isPrefixOf`)
 
 -- a map of my search-engines
-searchEngineMap :: M.Map (String) (S.SearchEngine)
+searchEngineMap :: M.Map String S.SearchEngine
 searchEngineMap = M.fromList $ map se
     [ S.google, S.hoogle, S.hackage, hayoo ]
     where
@@ -194,6 +247,7 @@ searchEngineMap = M.fromList $ map se
 
         hayoo = S.searchEngine "hayoo" "http://hayoo.fh-wedel.de/?query="
 
+--------------------------------------------------------------------------------
 
 -- TODO: move it to a util module
 -- mkComplListFuzzy :: [String] -> String -> IO [String]
@@ -244,7 +298,7 @@ main = do
   setEnv "BROWSER" browser
   -- TODO: get width from Graphics.X11.Xrandr?
   let width = 683 -- half size of screen
-  h <- spawnPipe $ workspaceBar (width) "l" 0
+  h <- spawnPipe $ workspaceBar width "l" 0
   spawnPipe $ xmobarBar "/home/odi/.xmonad/infoBarrc"    -- infoBar top-right
 --  spawnPipe $ xmobarBar "/home/odi/conf/statusBarrc"  -- stautsBar bottom
   xmonad $ withUrgencyHook NoUrgencyHook $ defaultConfig
