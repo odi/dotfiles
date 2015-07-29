@@ -16,42 +16,35 @@ TODO:
 -- http://xmonad.org/xmonad-docs/xmonad/index.html
 -- http://xmonad.org/xmonad-docs/xmonad-contrib/index.html
 
+-- basic stuff
 import           Data.Char                       (isLetter)
 import           Data.List                       (intercalate)
+import qualified Data.Map                as M    (Map(..), union, fromList, lookup, toList)
+import           Data.Maybe                      (fromMaybe, mapMaybe)
+import           GHC.IO.Handle.Types             (Handle)
+import           System.Environment              (setEnv)
 import           Text.Regex.Posix                ((=~))
 
+-- xmonad stuff
 import           XMonad                          
-
+import           XMonad.Actions.CopyWindow       (copyWindow)
 import qualified XMonad.Actions.Search   as S    (Browser, SearchEngine(..),
                                                   search, hoogle, google, hackage, isPrefixOf,
                                                   searchEngine)
-import           XMonad.Actions.CopyWindow       (copyWindow)
 import           XMonad.Actions.WindowBringer    (windowMap, bringWindow)
+import           XMonad.Hooks.DynamicLog         (dynamicLogWithPP, defaultPP, dzenColor, shorten, wrap,
+                                                  ppOutput, ppTitle, ppCurrent, ppLayout, ppUrgent,
+                                                  ppOrder, ppSep)
+import           XMonad.Hooks.ManageDocks        (avoidStruts, ToggleStruts(..))
+import           XMonad.Hooks.UrgencyHook        (focusUrgent, withUrgencyHook, NoUrgencyHook(..))
+import           XMonad.Prompt                   (XPrompt(..), XPConfig(..), XPPosition(Bottom),
+                                                  defaultXPConfig, getNextCompletion, mkXPrompt,
+                                                  historyCompletionP)
+import           XMonad.Prompt.Shell             (shellPrompt, prompt)
+import           XMonad.Prompt.XMonad            (xmonadPrompt)
 import           XMonad.StackSet         as SS   (focusWindow)
-
-import           XMonad.Hooks.DynamicLog
-import           XMonad.Hooks.ManageDocks
-import           XMonad.Hooks.UrgencyHook
-
-
-import           XMonad.Prompt
-import           XMonad.Prompt.AppLauncher
-import           XMonad.Prompt.Input
-import           XMonad.Prompt.XMonad
-import           XMonad.Prompt.Shell
-
-import           XMonad.Util.Font
-import           XMonad.Util.Loggers
-import           XMonad.Util.Run
-import           XMonad.Util.Replace
-
-import qualified Data.Map as M
-import           Data.Maybe (fromMaybe, mapMaybe)
-import           GHC.IO.Handle.Types
-
-import           Control.Applicative
-
-import           System.Environment
+import           XMonad.Util.Run                 (spawnPipe, hPutStrLn)
+import           XMonad.Util.Types               (Direction2D(U, D))
 
 -- some default configurations
 terminal'     = "xterm"
@@ -248,14 +241,6 @@ searchEngineMap = M.fromList $ map se
         hayoo = S.searchEngine "hayoo" "http://hayoo.fh-wedel.de/?query="
 
 --------------------------------------------------------------------------------
-
--- TODO: move it to a util module
--- mkComplListFuzzy :: [String] -> String -> IO [String]
--- mkComplListFuzzy ss p = return $ mapMaybe (\x -> match x (filter isLetter p)) ss
---   where
---     fuzzyMatch s p = s =~ (intercalate ".*?" $ map (:[]) p)
---     match s p      = if (fuzzyMatch s p) then Just s else Nothing
-
 
 {-
  | workspaceBar |              |infoBar |
