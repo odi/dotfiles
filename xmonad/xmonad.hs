@@ -117,7 +117,7 @@ keys_ :: XConfig Layout -> M.Map (KeyMask, KeySym) (X ())
 keys_ (XConfig {modMask = modm}) = M.fromList
   [ ((modm, xK_Return),       spawn terminal')
   , ((modm, xK_g),            windowPromptGoto_ promptConf)
---  , ((modm, xK_b), windowPromptBring promptConf)
+  , ((modm, xK_b),            windowPromptBring_ promptConf)
     -- dirty hack of switching to firefox/vimperator windows
 --  , ((modm, xK_v), windowPromptGotoPropClass "conkeror" promptConf)
   , ((modm, xK_u), sendMessage $ ToggleStrut U)
@@ -128,7 +128,7 @@ keys_ (XConfig {modMask = modm}) = M.fromList
   , ((modm, xK_BackSpace), focusUrgent)
   , ((modm, xK_q), spawn "pkill dzen2; pkill xmobar" >> restart "xmonad" True)
   , ((modm .|. shiftMask, xK_l), spawn "lock.sh")
-  , ((modm, xK_s), searchEnginePrompt promptConf chromium S.google searchEngineMap)
+  , ((modm, xK_s), searchEnginePrompt promptConf browser S.google searchEngineMap)
   , ((modm, xK_r), prompt ("xterm" ++ " -e") promptConf)
     -- get keysym from `xev'
 --  , ((0, 0x1008ff13), spawn "amixer sset Master 2%+")  -- increase volume
@@ -138,8 +138,6 @@ keys_ (XConfig {modMask = modm}) = M.fromList
 --  , ((modm, xK_o), urlHistoryPrompt promptConf (browserHistory Conkeror 
 -- placesDB))
   ]
-
-chromium = "/home/odi/.nix-profile/bin/chromium"
 
 --------------------------------------------------------------------------------
 -- Prompts
