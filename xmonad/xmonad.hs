@@ -16,16 +16,14 @@ TODO:
 
 import           XMonad
 
-import qualified XMonad.Actions.Search as S
-import qualified XMonad.Actions.Submap as SM
+import qualified XMonad.Actions.Search   as S  (Browser, SearchEngine(..),
+                                                search, hoogle, google, hackage, isPrefixOf,
+                                                searchEngine)
 
 import           XMonad.Hooks.DynamicLog
 import           XMonad.Hooks.ManageDocks
 import           XMonad.Hooks.UrgencyHook
 
--- imported from xmonad-ext
---import           XMonad.Libs.Completion
---import           XMonad.Ext.BrowserPrompt
 
 import           XMonad.Prompt
 import           XMonad.Prompt.AppLauncher
@@ -44,7 +42,6 @@ import           Data.Maybe (fromMaybe)
 import           GHC.IO.Handle.Types
 
 import           Control.Applicative
---import           Database.SQLite.Simple
 
 import           System.Environment
 
@@ -130,7 +127,8 @@ keys_ (XConfig {modMask = modm}) = M.fromList $
   , ((modm, xK_BackSpace), focusUrgent)
   , ((modm, xK_q), spawn "pkill dzen2; pkill xmobar" >> restart "xmonad" True)
   , ((modm .|. shiftMask, xK_l), spawn "lock.sh")
-  , ((modm, xK_s), prompt ("xterm" ++ " -e") promptConf)
+  , ((modm, xK_s), searchEnginePrompt promptConf chromium S.google searchEngineMap)
+  , ((modm, xK_r), prompt ("xterm" ++ " -e") promptConf)
     -- get keysym from `xev'
 --  , ((0, 0x1008ff13), spawn "amixer sset Master 2%+")  -- increase volume
   , ((0, 0x1008ff13), spawn "avol.sh inc")  -- increase volume
@@ -140,21 +138,62 @@ keys_ (XConfig {modMask = modm}) = M.fromList $
 -- placesDB))
   ]
 
---data SEngine = SEngine
---instance XPrompt SEngine where
---  showXPrompt SEngine        = "search with: "
---  commandToComplete _ c = c
---  nextCompletion      _ = getNextCompletion
+chromium = "/home/odi/.nix-profile/bin/chromium"
 
---searchEnginePrompt :: XPConfig -> S.SearchEngine -> M.Map (String) 
---(S.SearchEngine) -> X ()
---searchEnginePrompt config defeng sem = do
---  mkXPrompt SEngine config (mkComplFunFromList $ map (fst) (M.toList sem)) 
--- $ fireSearchEngine
---  where
---    fireSearchEngine :: String -> X ()
---    fireSearchEngine name = S.promptSearchBrowser config browser $
---                            fromMaybe defeng (M.lookup name sem)
+--------------------------------------------------------------------------------
+-- Search Engines
+
+-- Defines a new datatype for my search-engine prompt.
+-- Creates a function for two-level prompting
+--   1. ask which search-engine to use
+--   2. ask for the search-string
+data SearchEngine = SearchEngine
+data Search = Search String
+
+instance XPrompt SearchEngine where
+    showXPrompt SearchEngine   = "Search-Engine: "
+    commandToComplete _ c      = c
+    nextCompletion _           = getNextCompletion
+
+instance XPrompt Search where
+    showXPrompt (Search name) = "Search [" ++ name ++ "]: "
+    commandToComplete _ c     = c
+    nextCompletion _          = getNextCompletion
+
+-- | Define a prompt for searching through some search-engines.
+-- It consists of two prompts; first it will ask which search-engine to use and
+-- second for the search-string.
+searchEnginePrompt :: XPConfig                          -- ^ xpconfig to use
+                   -> S.Browser                         -- ^ which browser to use
+                   -> S.SearchEngine                    -- ^ default Search-Engine
+                   -> M.Map (String) (S.SearchEngine)   -- ^ map of: name -> search-engine
+                   -> X ()
+searchEnginePrompt config browser engine sem = do
+    mkXPrompt SearchEngine config complF fireSearchEngine
+    where
+        complF = historyCompletionP ("Search-Engine:" `S.isPrefixOf`)
+        fireSearchEngine :: String -> X ()
+        fireSearchEngine name = promptSearchBrowser config browser $
+                                   fromMaybe engine (M.lookup name sem)
+
+-- extend `promptSearchBrowser` from XMonad.Actions.Search to only use
+-- history for one search history instead of all seach-engine histories
+promptSearchBrowser :: XPConfig -> S.Browser -> S.SearchEngine -> X ()
+promptSearchBrowser config browser (S.SearchEngine name site) =
+    mkXPrompt (Search name) config (complF name) $ S.search browser site
+    where
+        complF name = historyCompletionP (("Search [" ++ name) `S.isPrefixOf`)
+
+-- a map of my search-engines
+searchEngineMap :: M.Map (String) (S.SearchEngine)
+searchEngineMap = M.fromList $ map se
+    [ S.google, S.hoogle, S.hackage, hayoo ]
+    where
+        se :: S.SearchEngine -> (String, S.SearchEngine)
+        se x@(S.SearchEngine name _) = (name, x)
+
+        hayoo = S.searchEngine "hayoo" "http://hayoo.fh-wedel.de/?query="
+
 
 -- TODO: move it to a util module
 -- mkComplListFuzzy :: [String] -> String -> IO [String]
@@ -163,28 +202,6 @@ keys_ (XConfig {modMask = modm}) = M.fromList $
 --     fuzzyMatch s p = s =~ (intercalate ".*?" $ map (:[]) p)
 --     match s p      = if (fuzzyMatch s p) then Just s else Nothing
 
--- First class function because I used it for my default search-engine.
---duckduck :: S.SearchEngine
---duckduck = S.searchEngine "duckduck" "https://duckduckgo.com/?q="
-
---searchEngineMap :: M.Map (String) (S.SearchEngine)
---searchEngineMap = M.fromList $
---  [ se S.google, se S.hoogle
---  , se hackage, se hayoo, se duckduck, se wikien, se wikide
---  , se sof
---  ]
---  where
---    se :: S.SearchEngine -> (String, S.SearchEngine)
---    se x@(S.SearchEngine name _) = (name, x)
-
---    hayoo    = S.searchEngine "hayoo" "http://hayoo.fh-wedel.de/?query="
---    hackage  = S.searchEngine "hackage" 
---"http://hackage.haskell.org/packages/search?terms="
---    wikien   = S.searchEngine "wikien" 
---"https://en.wikipedia.org/w/index.php?search="
---    wikide   = S.searchEngine "wikide" 
---"https://de.wikipedia.org/w/index.php?search="
---    sof      = S.searchEngine "sof" "http://stackoverflow.com/search?q="
 
 {-
  | workspaceBar |              |infoBar |
