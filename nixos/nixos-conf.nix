@@ -50,22 +50,31 @@
   # Enable CUPS to print documents.
   # services.printing.enable = true;
 
-  # Enable the X11 windowing system.
-  services.xserver.enable = true;
-  services.xserver.layout = "de";
-  services.xserver.xkbVariant = "nodeadkeys";
-  services.xserver.synaptics.enable = true;
+  # XServer configurations
+  services.xserver = {
+    # main configurations
+    enable = true;
+    layout = "de";
+    xkbVariant = "nodeadkeys";
+    synaptics.enable = true;
 
-  services.xserver.displayManager.desktopManagerHandlesLidAndPower = false;
+    # configuration for display-manager
+    displayManager.desktopManagerHandlesLidAndPower = false;
 
-  # Disable xterm as desktopManager.
-  services.xserver.desktopManager.default = "";
-  services.xserver.desktopManager.xterm.enable = false;
+    # configuration for desktop-manager (deactive desktop-manager)
+    desktopManager.default = "";
+    desktopManager.xterm.enable = false;
 
-  # Use xmonad as my windowManager.
-  services.xserver.windowManager.default = "xmonad";
-  services.xserver.windowManager.xmonad.enable = true;
-  services.xserver.windowManager.xmonad.enableContribAndExtras = true;
+    # configuration for window-manager (use xmonad)
+    windowManager = {
+      default = "xmonad";
+      xmonad = {
+        enable = true;
+	enableContribAndExtras = true;
+	# extraPackages -> use this for my lib
+      };
+    };
+  };
 
   # Postfix configuration
   services.postfix = {
