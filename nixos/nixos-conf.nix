@@ -15,6 +15,7 @@
   boot.loader.grub.enable = true;
   boot.loader.grub.version = 2;
   boot.loader.grub.device = "/dev/sda";
+  boot.kernelPackages = pkgs.linuxPackages_4_1;
 
   hardware.pulseaudio.enable = true;
 
@@ -54,6 +55,7 @@
   services.xserver = {
     # main configurations
     enable = true;
+    videoDrivers = [ "intel" ]; # TODO: hardware dependent -> move!
     layout = "de";
     xkbVariant = "nodeadkeys";
     synaptics.enable = true;
@@ -91,6 +93,9 @@
       smtpd_tls_security_level = may
     '';
   };
+
+  # enable atd service
+  services.atd.enable = true;
 
   # Define some fonts.
   fonts = {
