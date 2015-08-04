@@ -38,6 +38,7 @@
   (setq jabber-default-priority "20")))
 
 ;; ## Erc
+(require 'erc)
 (setq erc-prompt-for-password nil)
 (setq erc-user-full-name "Oliver Dunkl")
 ;; don't show some logging (e.g. joining/leaving user, ...)
