@@ -18,6 +18,7 @@
 (mouse-wheel-mode -1)  ;; disable mouse wheel
 (show-paren-mode t)    ;; show fitting braces
 (winner-mode t)        ;; activate winner-mode
+(menu-bar-mode -1)     ;; disable menu-bar - get with F10
 
 ;; prefered coding system
 (prefer-coding-system 'utf-8)  ;; use UTF-8 as my prefered coding system
@@ -51,8 +52,9 @@
 (setq vc-make-backup-files t)
 
 ;; default browser
-(setq browse-url-browser-function 'browse-url-chromium
-      browse-url-new-window-flag t)
+(setq browse-url-browser-function 'browse-url-generic
+      browse-url-new-window-flag t
+      browse-url-generic-program "conkeror")
 
 ;; load all my configurations which i'll not show to the public
 (load-file "~/etc/emacs/secure.el")
