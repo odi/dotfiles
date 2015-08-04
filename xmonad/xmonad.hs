@@ -1,17 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE FlexibleContexts  #-}
 
-{-
-TODO:
- - get width of Screen for logHook
- - UTF8 in title
-   -> using decodeString from utf8-string
-   -> works for title but not for seperator
-      -> works for seperator if using encodeString
- - UTF8 in shell-prompt
- - move history part and search engine to xmonad-ext?
--}
-
 -- more informations:
 -- http://xmonad.org/xmonad-docs/xmonad/index.html
 -- http://xmonad.org/xmonad-docs/xmonad-contrib/index.html
@@ -19,7 +8,7 @@ TODO:
 -- basic stuff
 import           Data.Char                       (isLetter)
 import           Data.List                       (intercalate)
-import qualified Data.Map                as M    (Map(..), union, fromList, lookup, toList)
+import qualified Data.Map                as M    (Map(..), union, fromList, lookup, toList, keys)
 import           Data.Maybe                      (fromMaybe, mapMaybe)
 import           GHC.IO.Handle.Types             (Handle)
 import           System.Environment              (setEnv)
@@ -30,16 +19,18 @@ import           XMonad
 import           XMonad.Actions.CopyWindow       (copyWindow)
 import qualified XMonad.Actions.Search   as S    (Browser, SearchEngine(..),
                                                   search, hoogle, google, hackage, isPrefixOf,
-                                                  searchEngine)
+                                                  searchEngine, youtube)
 import           XMonad.Actions.WindowBringer    (windowMap, bringWindow)
 import           XMonad.Hooks.DynamicLog         (dynamicLogWithPP, defaultPP, dzenColor, shorten, wrap,
                                                   ppOutput, ppTitle, ppCurrent, ppLayout, ppUrgent,
                                                   ppOrder, ppSep)
 import           XMonad.Hooks.ManageDocks        (avoidStruts, ToggleStruts(..))
 import           XMonad.Hooks.UrgencyHook        (focusUrgent, withUrgencyHook, NoUrgencyHook(..))
+import           XMonad.Hooks.Script             (execScriptHook)
 import           XMonad.Prompt                   (XPrompt(..), XPConfig(..), XPPosition(Bottom),
                                                   defaultXPConfig, getNextCompletion, mkXPrompt,
-                                                  historyCompletionP)
+                                                  historyCompletionP, mkComplFunFromList',
+                                                  deleteAllDuplicates)
 import           XMonad.Prompt.Shell             (shellPrompt, prompt)
 import           XMonad.Prompt.XMonad            (xmonadPrompt)
 import           XMonad.StackSet         as SS   (focusWindow)
@@ -55,7 +46,7 @@ modMask'      = mod4Mask
 editor        = "emacsclient -c -a \"emacs\" "
 dzenExec      = "dzen2"
 xmobarExec    = "xmobar -f " ++ defaultFont 16 "normal"
-browser       = "conkeror"
+browser       = "/home/odi/bin/browser.sh"
 placesDB      = "/home/odi/.conkeror.mozdev.org/conkeror/l65w5mjs.odi/places.sqlite"
 
 -- used colors
@@ -84,7 +75,7 @@ defaultFont size weight =
 -- configuration for the shell-prompt
 promptConf :: XPConfig
 promptConf = defaultXPConfig
-  { font              = defaultFont 16 "normal"
+  { font              = defaultFont 17 "normal"
   , bgColor           = cBlack
   , fgColor           = cWhite
   , fgHLight          = cGrey
@@ -94,6 +85,7 @@ promptConf = defaultXPConfig
   , position          = Bottom
   , height            = 24
   , defaultText       = []
+  , historyFilter     = deleteAllDuplicates
   }
 
 logHook' :: Handle -> X ()
@@ -214,7 +206,7 @@ searchEnginePrompt :: XPConfig                          -- ^ xpconfig to use
 searchEnginePrompt config browser engine sem =
     mkXPrompt SearchEngine config complF fireSearchEngine
     where
-        complF = historyCompletionP ("Search-Engine:" `S.isPrefixOf`)
+        complF = mkComplFunFromList' $ M.keys searchEngineMap
 
         fireSearchEngine :: String -> X ()
         fireSearchEngine name = promptSearchBrowser config browser $
@@ -231,7 +223,7 @@ promptSearchBrowser config browser (S.SearchEngine name site) =
 -- a map of my search-engines
 searchEngineMap :: M.Map String S.SearchEngine
 searchEngineMap = M.fromList $ map se
-    [ S.google, S.hoogle, S.hackage, hayoo ]
+    [ S.google, S.hoogle, S.hackage, hayoo, S.youtube ]
     where
         se :: S.SearchEngine -> (String, S.SearchEngine)
         se x@(S.SearchEngine name _) = (name, x)
@@ -293,4 +285,5 @@ main = do
     , logHook            = logHook' h
     , layoutHook         = layoutHook'
     , keys               = keys'
+    , startupHook        = execScriptHook "startup"
     }
