@@ -83,6 +83,17 @@
       '(("Mobile" . "cell")
 	("Work" . "work")))
 
+;; ## TEST ## git-gutter
+;; https://github.com/syohex/emacs-git-gutter
+(add-to-list 'load-path "~/.emacs.d/elisp/emacs-git-gutter")
+(require 'git-gutter)
+(add-hook 'emacs-lisp-mode-hook 'git-gutter-mode)
+(add-hook 'nix-mode-hook 'git-gutter-mode)
+(setq git-gutter:update-interval 0
+      git-gutter:added-sign "+"
+      git-gutter:modified-sign "="
+      git-gutter:deleted-sing "-")
+
 ;; ## jabber, erc
 (load-file "~/etc/emacs/im_irc.el")
 
@@ -115,15 +126,19 @@
       '("~/etc/emacs/yasnippet"))
 (yas-global-mode 1)
 
-;; ## backups-mode
+;; ## TEST ## backups-mode
 ;; https://github.com/chadbraunduin/backups-mode
 (add-to-list 'load-path "~/.emacs.d/elisp/backups-mode")
 (require 'backups-mode)
 (backups-mode-start)
 
-;; ## highlight-symbol
+;; ## TEST ## highlight-symbol
 (add-to-list 'load-path "~/.emacs.d/elisp/highlight-symbol.el")
 (require 'highlight-symbol)
+
+;; ## TEST ## highlighting indentation
+;; https://github.com/antonj/Highlight-Indentation-for-Emacs
+(load-file "~/.emacs.d/elisp/highlight-indentation.el")
 
 ;; load theme
 ;; this should be the last 
