@@ -20,7 +20,8 @@
 (setq cyellow  "gold"
       corange  "DarkOrange3"
       cred     "firebrick"
-      cgreen   "LimeGreen")
+      cgreen   "LimeGreen"
+      cblue    "DodgerBlue3")
 
 ;; common configurations
 (set-face-attribute 'erc-nick-default-face nil
@@ -43,6 +44,14 @@
 		    :background solarized-yellow)
 (set-face-attribute 'org-mode-line-clock nil
 		    :inherit 'org-agenda-clocking)
+
+;; glutter
+(set-face-foreground 'git-gutter:added cgreen)
+(set-face-background 'git-gutter:added "PaleGreen1")
+(set-face-foreground 'git-gutter:modified cblue)
+(set-face-background 'git-gutter:modified "LightBlue1")
+(set-face-foreground 'git-gutter:deleted cred)
+(set-face-background 'git-gutter:deleted "LightSalmon1")
 
 ;; defines two functions for light/dark theme
 ;; these defines some variables in respect to their theme
