@@ -11,6 +11,7 @@
 (global-set-key (kbd "C-x b") 'helm-buffers-list)
 (global-set-key (kbd "C-c h i") 'helm-imenu)
 (global-set-key (kbd "M-x") 'helm-M-x) ;; default execute-extended-command
+(global-set-key (kbd "M-y") 'helm-show-kill-ring)
 
 ;; ## helm-swoop
 (require 'helm-swoop)
@@ -24,3 +25,6 @@
 ;; quickfix for helm+projectile error message
 ;; https://github.com/bbatsov/projectile/issues/358
 (defalias 'helm-buffers-match-function 'helm-buffers-list--match-fn)
+
+(add-to-list 'grep-find-ignored-files "*.jar")
+(add-to-list 'grep-find-ignored-files "*.hi")
