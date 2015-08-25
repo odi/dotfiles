@@ -19,6 +19,7 @@
 (show-paren-mode t)    ;; show fitting braces
 (winner-mode t)        ;; activate winner-mode
 (menu-bar-mode -1)     ;; disable menu-bar - get with F10
+(column-number-mode t) ;; show column number too
 
 ;; prefered coding system
 (prefer-coding-system 'utf-8)  ;; use UTF-8 as my prefered coding system
