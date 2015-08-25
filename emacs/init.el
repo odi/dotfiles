@@ -32,7 +32,8 @@
  ((string= system-name "rise-io")
   ;; set default font
   (set-face-attribute 'default nil
-		      :font "DejaVu Sans Mono 13"))
+		      :font "DejaVu Sans Mono"
+		      :height 123))
  ((string= system-name "io")
   ;; set default font
   (set-face-attribute 'default nil
@@ -60,8 +61,9 @@
 (load-file "~/etc/emacs/secure.el")
 
 ;; email configurations
-(require 'gnus)
+;;(require 'gnus)
 (setq message-send-mail-function 'message-send-mail-with-sendmail)
+(setq sendmail-program "msmtp")
 
 ;; ## ace-jump-mode
 (require 'ace-jump-mode)
@@ -100,7 +102,14 @@
 ;; ## helm, helm-swoop, ...
 (load-file "~/etc/emacs/helm.el")
 
+;; ## TEST ## indent-guide
+;; https://github.com/zk-phi/indent-guide
+(add-to-list 'load-path "~/.emacs.d/elisp/indent-guide")
+(require 'indent-guide)
+
 ;; ## haskell-mode
+;; use git-version instead of releases in the nix-store
+(add-to-list 'load-path "~/.emacs.d/elisp/haskell-mode")
 (load-file "~/etc/emacs/haskell.el")
 
 ;; ## org-mode
@@ -126,19 +135,26 @@
       '("~/etc/emacs/yasnippet"))
 (yas-global-mode 1)
 
+;; ## notmuch
+(load-file "~/etc/emacs/notmuch.el")
+
+;; ## hydra
+(add-to-list 'load-path "~/.emacs.d/elisp/hydra")
+(load-file "~/etc/emacs/hydra.el")
+
 ;; ## TEST ## backups-mode
 ;; https://github.com/chadbraunduin/backups-mode
-(add-to-list 'load-path "~/.emacs.d/elisp/backups-mode")
-(require 'backups-mode)
-(backups-mode-start)
+;; (add-to-list 'load-path "~/.emacs.d/elisp/backups-mode")
+;; (require 'backups-mode)
+;; (backups-mode-start)
 
 ;; ## TEST ## highlight-symbol
 (add-to-list 'load-path "~/.emacs.d/elisp/highlight-symbol.el")
 (require 'highlight-symbol)
 
-;; ## TEST ## highlighting indentation
-;; https://github.com/antonj/Highlight-Indentation-for-Emacs
-(load-file "~/.emacs.d/elisp/highlight-indentation.el")
+;; use smart-mode-line
+(require 'smart-mode-line)
+(load-file "~/etc/emacs/smart-mode-line.el")
 
 ;; load theme
 ;; this should be the last 
