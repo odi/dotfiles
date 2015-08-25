@@ -1,6 +1,6 @@
 (setq sml/no-confirm-load-theme t)
 
-(setq sml/theme 'light)
+(setq sml/theme 'dark)
 (sml/setup)
 
 ;; size of some categories in the mode-line
