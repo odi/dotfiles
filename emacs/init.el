@@ -92,9 +92,9 @@
 (add-hook 'emacs-lisp-mode-hook 'git-gutter-mode)
 (add-hook 'nix-mode-hook 'git-gutter-mode)
 (setq git-gutter:update-interval 0
-      git-gutter:added-sign "+"
-      git-gutter:modified-sign "="
-      git-gutter:deleted-sing "-")
+      git-gutter:added-sign "▐"
+      git-gutter:modified-sign "▐"
+      git-gutter:deleted-sign "▐")
 
 ;; ## jabber, erc
 (load-file "~/etc/emacs/im_irc.el")
