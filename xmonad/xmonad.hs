@@ -126,6 +126,7 @@ keys_ (XConfig {modMask = modm}) = M.fromList
 --  , ((0, 0x1008ff13), spawn "amixer sset Master 2%+")  -- increase volume
   , ((0, 0x1008ff13), spawn "avol.sh inc")  -- increase volume
   , ((0, 0x1008ff11), spawn "avol.sh dec")  -- decrease volume
+  , ((modm .|. shiftMask, xK_c), spawn "emacs-float.sh")
 --  , ((modm, xK_s), searchEnginePrompt promptConf duckduck searchEngineMap)
 --  , ((modm, xK_o), urlHistoryPrompt promptConf (browserHistory Conkeror 
 -- placesDB))
@@ -230,6 +231,11 @@ searchEngineMap = M.fromList $ map se
 
         hayoo = S.searchEngine "hayoo" "http://hayoo.fh-wedel.de/?query="
 
+
+manageHook' :: ManageHook
+manageHook' = composeAll (
+  [ stringProperty "WM_NAME" =? "emacs-capture" --> doFloat
+  ] )
 --------------------------------------------------------------------------------
 
 {-
@@ -284,6 +290,7 @@ main = do
     , focusedBorderColor = focusedColor'
     , logHook            = logHook' h
     , layoutHook         = layoutHook'
+    , manageHook         = manageHook'
     , keys               = keys'
     , startupHook        = execScriptHook "startup"
     }
