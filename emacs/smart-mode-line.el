@@ -17,3 +17,4 @@
 (add-hook 'emacs-lisp-mode-hook (lambda () (setq mode-name "EL")))
 (add-hook 'haskell-mode-hook (lambda () (setq mode-name "HS")))
 (add-hook 'haskell-interactive-mode-hook (lambda () (setq mode-name "IntHS")))
+(add-hook 'org-agenda-mode-hook (lambda () (setq mode-name "OrgA")))
