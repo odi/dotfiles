@@ -78,22 +78,6 @@
     };
   };
 
-  # Postfix configuration
-  services.postfix = {
-    enable = true;
-    extraConfig = ''
-      inet_interfaces = loopback-only
-      sender_dependent_relayhost_maps = hash:/mnt/secure/sec/postfix/postfix_sender
-      smtp_sasl_auth_enable = yes
-      smtp_sasl_password_maps = hash:/mnt/secure/sec/postfix/postfix_sasl_passwd
-      smtp_sasl_security_options = noanonymous
-      smtp_sasl_tls_security_options = $smtp_sasl_security_options
-      smtp_sasl_mechanism_filter = plain, login
-      smtp_use_tls = yes
-      smtpd_tls_security_level = may
-    '';
-  };
-
   # enable atd service
   services.atd.enable = true;
 
@@ -104,6 +88,7 @@
     enableGhostscriptFonts = true;
     fonts = with pkgs; [
       dejavu_fonts
+      inconsolata
     ];
   };
 
@@ -122,5 +107,16 @@
     home = "/home/test";
     description = "A user for testing";
   };
+
+  # NAT networking rules for containers
+  networking.nat = {
+    enable = true;
+    internalInterfaces = ["ve-+"];
+    externalInterface = "wlp4s0";
+  };
+
+  # containers
+#  containers.hydra = {
+#  };
 
 }
