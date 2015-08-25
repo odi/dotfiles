@@ -126,7 +126,7 @@ keys_ (XConfig {modMask = modm}) = M.fromList
 --  , ((0, 0x1008ff13), spawn "amixer sset Master 2%+")  -- increase volume
   , ((0, 0x1008ff13), spawn "avol.sh inc")  -- increase volume
   , ((0, 0x1008ff11), spawn "avol.sh dec")  -- decrease volume
-  , ((modm .|. shiftMask, xK_c), spawn "emacs-float.sh")
+  , ((modm .|. shiftMask, xK_n), spawn "emacs-float.sh capture_note")
 --  , ((modm, xK_s), searchEnginePrompt promptConf duckduck searchEngineMap)
 --  , ((modm, xK_o), urlHistoryPrompt promptConf (browserHistory Conkeror 
 -- placesDB))
