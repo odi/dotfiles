@@ -3,7 +3,7 @@
 (setq org-time-clocksum-format
       '(:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t))
 (setq org-todo-keywords
-      '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
+      '((sequence "TODO(t!)" "NEXT(n!)" "|" "DONE(d!)")
 	(sequence "WAIT(w@/!)" "HOLD(h@/!)" "|" "CANC(c@)")))
 
 ;; faces for my keywords
@@ -21,7 +21,7 @@
 
 ;; add a :LOGBOOK: drawer for clocking and logging
 (setq org-clock-into-drawer t)
-(setq org-log-into-drawer nil)
+(setq org-log-into-drawer t)
 
 (setq org-show-entry-below t)
 (setq org-show-siblings t)
@@ -147,3 +147,52 @@
 ;; https://github.com/emacsattic/org-magit
 (add-to-list 'load-path "~/.emacs.d/elisp/org-magit")
 (require 'org-magit)
+
+(global-set-key (kbd "C-c s") 'org-clock-split-current-interval)
+
+(defun org-clock-split-current-interval (end-as-default)
+  "If this is a CLOCK line, split its clock time interval into two.
+Let the current time interval be A--C.  By default, this function
+interactively prompts for a time B (suggesting A as a default), and then
+replaces A--C by B--C and A--B.  When called with a prefix argument, the
+function uses C as a default for B.  The point is left on the later
+interval, so that this line can, e.g., be moved to another entry."
+     (interactive "P")
+     (save-excursion
+       (beginning-of-line nil)
+       (skip-chars-forward " \t")
+       (when (looking-at org-clock-string)
+         (beginning-of-line nil)
+         (let ((re (concat "\\([ \t]*" org-clock-string " *\\)"
+			   "\\([[<][^]>]+[]>]\\)\\(-+\\)\\([[<][^]>]+[]>]\\)"
+                           "\\(?:[ \t]*=>.*\\)?")))
+           (when (looking-at re)
+             (let ((indentation (match-string 1))
+                   (start (match-string 2))
+                   (to (match-string 3))
+                   (end (match-string 4))
+                   (use-start-as-default (equal end-as-default nil)))
+               ;; interactively change A--C to B--C,
+               ;; or (given prefix argument) to A--B, …
+               (re-search-forward (concat org-clock-string " \\([[<]\\)"))
+               (when (not use-start-as-default) (re-search-forward
+						 "\\([[<]\\)"))
+               ;; respecting whether A or C is an active or an
+	       ;; inactive timestamp
+               (call-interactively (if (equal (match-string 1) "<")
+				       'org-time-stamp
+				     'org-time-stamp-inactive))
+               ;; If there were a function that implemented the actual
+	       ;; body of org-clock-update-time-maybe, we could call that function, as in
+	       ;; this context we _know_ that we are on a CLOCK line.
+               (org-clock-update-time-maybe)
+               ;; copy changed time B
+               (re-search-backward org-ts-regexp-both)
+               (let ((middle (match-string 0)))
+                 ;; insert A--B below, or (given prefix argument) insert B--C above
+                 (end-of-line (if use-start-as-default 1 0))
+                 (insert "\n" indentation
+                         (if use-start-as-default start middle)
+                         to
+                         (if use-start-as-default middle end))
+                 (org-clock-update-time-maybe))))))))
