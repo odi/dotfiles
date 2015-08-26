@@ -4,7 +4,7 @@
 		    :foreground "#fff")
 
 (set-face-attribute 'mode-line nil
-		    :background "gray15"
+		    :background "grey15"
 		    :foreground "white"
 		    :box "grey50")
 (set-face-attribute 'mode-line-inactive nil
@@ -15,7 +15,7 @@
 (set-face-attribute 'link nil
 		    :foreground "DodgerBlue")
 (set-face-attribute 'region nil
-		    :background "grey10")
+		    :background "DodgerBlue4")
 
 ;; Jabber faces
 (set-face-attribute 'jabber-roster-user-online nil
@@ -38,6 +38,12 @@
 		    :weight 'normal)
 (set-face-attribute 'jabber-rare-time-face nil
 		    :foreground "DarkGoldenrod1")
+(set-face-attribute 'jabber-activity-face nil
+		    :foreground "YellowGreen"
+		    :weight 'normal)
+(set-face-attribute 'jabber-activity-personal-face nil
+		    :foreground "YellowGreen"
+		    :weight 'bold)
 
 ;; git gutter
 (set-face-foreground 'git-gutter:added "ForestGreen")
@@ -56,6 +62,13 @@
 		    :foreground "DarkGoldenrod1")
 (set-face-attribute 'org-special-keyword nil
 		    :foreground "MediumOrchid3")
+
+;; ansi-colors
+(setq ansi-color-names-vector
+      [ "black" "firebrick1" "LimeGreen"
+	"DarkGoldenrod1" "DodgerBlue" "magenta3"
+	"cyan3" "gray90" ])
+(setq ansi-color-map (ansi-color-make-color-map))
 
 ;; ;; common configurations
 ;; (set-face-attribute 'erc-nick-default-face nil
