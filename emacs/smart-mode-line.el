@@ -18,3 +18,12 @@
 (add-hook 'haskell-mode-hook (lambda () (setq mode-name "HS")))
 (add-hook 'haskell-interactive-mode-hook (lambda () (setq mode-name "IntHS")))
 (add-hook 'org-agenda-mode-hook (lambda () (setq mode-name "OrgA")))
+
+(set-face-attribute 'sml/global nil
+		    :foreground "grey70")
+(set-face-attribute 'sml/discharging nil
+		    :foreground "firebrick1")
+(set-face-attribute 'sml/vc nil
+		    :foreground "LimeGreen")
+(set-face-attribute 'sml/vc-edited nil
+		    :foreground "DodgerBlue")
