@@ -4,12 +4,12 @@
 		    :foreground "#fff")
 
 (set-face-attribute 'mode-line nil
-		    :background "black"
+		    :background "gray15"
 		    :foreground "white"
-		    :box "grey20")
+		    :box "grey50")
 (set-face-attribute 'mode-line-inactive nil
 		    :background "grey10"
-		    :box nil)
+		    :box "grey10")
 
 ;; default base faces
 (set-face-attribute 'link nil
