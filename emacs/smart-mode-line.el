@@ -27,3 +27,5 @@
 		    :foreground "LimeGreen")
 (set-face-attribute 'sml/vc-edited nil
 		    :foreground "DodgerBlue")
+(set-face-attribute 'sml/modified nil
+		    :foreground "firebrick1")
