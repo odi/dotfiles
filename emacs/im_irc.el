@@ -30,6 +30,10 @@
 	jabber-message-scroll  ;; ?
 	odi/xmonad-notify))    ;; set urgendcy-flag of window-manager
 
+;; disable presence notification about users
+;; it is not nice if i have a lot of users in my roster
+(setq jabber-alert-presence-hooks nil)
+
 ;; sent messages to `io` if all of them are available
 (cond
  ((string= system-name "rise-io")
