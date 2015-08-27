@@ -26,6 +26,6 @@
 (set-face-attribute 'sml/vc nil
 		    :foreground "LimeGreen")
 (set-face-attribute 'sml/vc-edited nil
-		    :foreground "DodgerBlue")
+		    :foreground "VioletRed1")
 (set-face-attribute 'sml/modified nil
 		    :foreground "firebrick1")
