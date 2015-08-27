@@ -16,6 +16,9 @@
 		    :foreground "DodgerBlue")
 (set-face-attribute 'region nil
 		    :background "DodgerBlue4")
+(set-face-attribute 'hl-line nil
+		    :background "grey20"
+		    :box nil)
 
 ;; Jabber faces
 (set-face-attribute 'jabber-roster-user-online nil
@@ -70,28 +73,43 @@
 	"cyan3" "gray90" ])
 (setq ansi-color-map (ansi-color-make-color-map))
 
-;; ;; common configurations
-;; (set-face-attribute 'erc-nick-default-face nil
-;; 		    :foreground solarized-magenta
-;; 		    :weight 'normal)
-;; (set-face-attribute 'erc-timestamp-face nil
-;; 		    :foreground cgreen
-;; 		    :weight 'normal)
-;; (set-face-attribute 'erc-notice-face nil
-;; 		    :foreground solarized-blue
-;; 		    :weight 'normal)
-;; (set-face-attribute 'erc-input-face nil
-;; 		    :foreground corange)
-;; (set-face-attribute 'erc-current-nick-face nil
-;; 		    :foreground solarized-cyan)
-;; ;; (set-face-attribute 'gnus-group-mail-3 nil
-;; ;; 		    :foreground solarized-red
-;; ;; 		    :weight 'bold)
-;; (set-face-attribute 'org-agenda-clocking nil
-;; 		    :background solarized-yellow)
-;; (set-face-attribute 'org-mode-line-clock nil
-;; 		    :inherit 'org-agenda-clocking)
-;; (set-face-attribute 'magit-item-highlight nil
-;; 		    :background cyellowlight)
+;; helm-swoop
+(set-face-attribute 'helm-swoop-target-line-face nil
+		    :foreground nil
+		    :background "grey20")
+(set-face-attribute 'helm-swoop-target-word-face nil
+		    :foreground "grey15"
+		    :background "goldenrod1")
 
-;; (set-face-foreground 'indent-guide-face "LightGrey")
+;; highlight-symbols
+(setq highlight-symbol-colors
+      '("LightGoldenrod4" "VioletRed4" "RoyalBlue4" "PaleGreen4"
+	"burlywood4" "CadetBlue4" "tomato4"))
+
+;; helm
+(set-face-attribute 'helm-selection nil
+		    :background "grey20"
+		    :underline nil)
+(set-face-attribute 'helm-source-header nil
+		    :background "tomato4"
+		    :foreground "white"
+		    :height 1.0
+		    :weight 'bold
+		    :font "Inconsolata-14")
+(set-face-attribute 'helm-buffer-file nil
+		    :foreground "GreenYellow")
+(set-face-attribute 'helm-buffer-process nil
+		    :foreground "SeaGreen")
+(set-face-attribute 'helm-buffer-directory nil
+		    :foreground "DodgerBlue2"
+		    :background nil
+		    :weight 'bold)
+(set-face-attribute 'helm-grep-match nil
+		    :foreground "goldenrod1"
+		    :background nil)
+(set-face-attribute 'helm-grep-file nil
+		    :foreground "magenta3")
+(set-face-attribute 'helm-grep-lineno nil
+		    :foreground "GreenYellow")
+(set-face-attribute 'helm-grep-finish nil
+		    :foreground "YellowGreen")
