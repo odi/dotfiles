@@ -152,10 +152,19 @@
 ;; ## TEST ## highlight-symbol
 (add-to-list 'load-path "~/.emacs.d/elisp/highlight-symbol.el")
 (require 'highlight-symbol)
+(define-key global-map (kbd "C-<f9>") 'highlight-symbol)
+(define-key global-map (kbd "<f9>") 'highlight-symbol-next)
+(define-key global-map (kbd "M-<f9>") 'highlight-symbol-prev)
 
 ;; use smart-mode-line
 (require 'smart-mode-line)
 (load-file "~/etc/emacs/smart-mode-line.el")
+
+;; use ace-window
+(add-to-list 'load-path "~/.emacs.d/elisp/avy")
+(add-to-list 'load-path "~/.emacs.d/elisp/ace-window")
+(require 'ace-window)
+(define-key global-map (kbd "M-o") 'ace-window)
 
 ;; load theme
 ;; this should be the last 
