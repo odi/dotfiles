@@ -65,6 +65,8 @@
 		    :foreground "DarkGoldenrod1")
 (set-face-attribute 'org-special-keyword nil
 		    :foreground "MediumOrchid3")
+(set-face-attribute 'org-agenda-clocking nil
+		    :background "salmon4")
 
 ;; ansi-colors
 (setq ansi-color-names-vector
@@ -113,3 +115,38 @@
 		    :foreground "GreenYellow")
 (set-face-attribute 'helm-grep-finish nil
 		    :foreground "YellowGreen")
+
+;; notmuch
+(set-face-attribute 'notmuch-wash-cited-text nil
+		    :foreground "SteelBlue4")
+(set-face-attribute 'notmuch-wash-toggle-button nil
+		    :foreground "SteelBlue3")
+(set-face-attribute 'notmuch-tag-face nil
+		    :foreground "MediumOrchid"
+		    :weight 'normal
+		    :height 120)
+(set-face-attribute 'notmuch-tree-match-tag-face nil
+		    :inherit 'notmuch-tag-face)
+(set-face-attribute 'notmuch-search-matching-authors nil
+		    :foreground "tomato1")
+(set-face-attribute 'notmuch-tree-match-author-face nil
+		    :foreground nil
+		    :inherit 'notmuch-search-matching-authors)
+(set-face-attribute 'notmuch-search-count nil
+		    :foreground "DodgerBlue")
+(set-face-attribute 'notmuch-search-date nil
+		    :foreground "YellowGreen")
+(set-face-attribute 'notmuch-tree-match-date-face nil
+		    :foreground nil
+		    :inherit 'notmuch-search-date)
+(set-face-attribute 'message-header-subject nil
+		    :foreground "tomato1"
+		    :weight 'normal)
+
+;; haskell
+(set-face-attribute 'haskell-warning-face nil
+		    :background "grey15"
+		    :underline '(:style line :color "yellow"))
+(set-face-attribute 'haskell-error-face nil
+		    :background "grey15"
+		    :underline '(:style line :color "tomato1"))
