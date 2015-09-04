@@ -97,14 +97,19 @@
       git-gutter:modified-sign "▐"
       git-gutter:deleted-sign "▐")
 
+;; key-binding for increasing/decreasing text in buffer
+(define-key global-map (kbd "C-c +") 'text-scale-increase)
+(define-key global-map (kbd "C-c -") 'text-scale-decrease)
+
 ;; ## jabber, erc
 (load-file "~/etc/emacs/im_irc.el")
 
 ;; ## helm, helm-swoop, ...
 (load-file "~/etc/emacs/helm.el")
 
-;; ## TEST ## indent-guide
+;; ## indent-guide
 ;; https://github.com/zk-phi/indent-guide
+;; TODO: move to haskell??
 (add-to-list 'load-path "~/.emacs.d/elisp/indent-guide")
 (require 'indent-guide)
 
@@ -149,7 +154,7 @@
 ;; (require 'backups-mode)
 ;; (backups-mode-start)
 
-;; ## TEST ## highlight-symbol
+;; ## highlight-symbol
 (add-to-list 'load-path "~/.emacs.d/elisp/highlight-symbol.el")
 (require 'highlight-symbol)
 (define-key global-map (kbd "C-<f9>") 'highlight-symbol)
