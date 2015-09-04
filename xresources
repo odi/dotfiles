@@ -1,6 +1,6 @@
 xterm*antialias:true
 xterm*faceName:DejaVu Sans Mono
-xterm*faceSize:13
+xterm*faceSize:12
 xterm*bellIsUrgent:true
 xterm*metaSendsEscape:true
 xterm*cursorBlink:true
@@ -33,3 +33,5 @@ xterm*color14:#00ced1
 xterm*charClass: 33:48,36-47:48,58-59:48,61:48,63-64:48,95:48,126:48
 xterm*VT100.Translations: #override \
   Ctrl <Key>Y: insert-selection(PRIMARY, CUT_BUFFER0)
+
+*international: true
