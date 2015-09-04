@@ -15,9 +15,9 @@
 (set-face-attribute 'link nil
 		    :foreground "DodgerBlue")
 (set-face-attribute 'region nil
-		    :background "DodgerBlue4")
+		    :background "DarkOrchid4")
 (set-face-attribute 'hl-line nil
-		    :background "grey20"
+		    :background "MediumPurple4"
 		    :box nil)
 
 ;; Jabber faces
@@ -77,7 +77,7 @@
 
 ;; helm-swoop
 (set-face-attribute 'helm-swoop-target-line-face nil
-		    :foreground nil
+		    :foreground "white"
 		    :background "grey20")
 (set-face-attribute 'helm-swoop-target-word-face nil
 		    :foreground "grey15"
@@ -90,7 +90,7 @@
 
 ;; helm
 (set-face-attribute 'helm-selection nil
-		    :background "grey20"
+		    :background "RoyalBlue4"
 		    :underline nil)
 (set-face-attribute 'helm-source-header nil
 		    :background "tomato4"
@@ -122,7 +122,7 @@
 (set-face-attribute 'notmuch-wash-toggle-button nil
 		    :foreground "SteelBlue3")
 (set-face-attribute 'notmuch-tag-face nil
-		    :foreground "MediumOrchid"
+		    :foreground "DodgerBlue"
 		    :weight 'normal
 		    :height 120)
 (set-face-attribute 'notmuch-tree-match-tag-face nil
@@ -133,15 +133,26 @@
 		    :foreground nil
 		    :inherit 'notmuch-search-matching-authors)
 (set-face-attribute 'notmuch-search-count nil
-		    :foreground "DodgerBlue")
+		    :foreground "goldenrod1")
 (set-face-attribute 'notmuch-search-date nil
 		    :foreground "YellowGreen")
 (set-face-attribute 'notmuch-tree-match-date-face nil
 		    :foreground nil
 		    :inherit 'notmuch-search-date)
 (set-face-attribute 'message-header-subject nil
-		    :foreground "tomato1"
+		    :foreground "goldenrod1"
+		    :weight 'bold)
+(set-face-attribute 'message-header-name nil
+		    :foreground "YellowGreen")
+(set-face-attribute 'message-header-to nil
+		    :foreground "DodgerBlue"
 		    :weight 'normal)
+(set-face-attribute 'message-header-cc nil
+		    :inherit 'message-header-to)
+(set-face-attribute 'notmuch-message-summary-face nil
+		    :background "grey15"
+		    :weight 'bold
+		    :box "grey50")
 
 ;; haskell
 (set-face-attribute 'haskell-warning-face nil
@@ -150,3 +161,34 @@
 (set-face-attribute 'haskell-error-face nil
 		    :background "grey15"
 		    :underline '(:style line :color "tomato1"))
+(set-face-attribute 'hi2-show-normal-face nil
+		    :underline "grey30")
+
+;; hydra
+(set-face-attribute 'hydra-face-blue nil
+		    :foreground "DodgerBlue3")
+(set-face-attribute 'hydra-face-red nil
+		    :foreground "tomato1")
+
+(set-face-attribute 'aw-leading-char-face nil
+		    :background "magenta"
+		    :foreground "grey15"
+		    :weight 'bold
+		    :height 1.2)
+
+;; diff
+(set-face-attribute 'diff-added nil
+		    :background "DarkOliveGreen")
+(set-face-attribute 'diff-refine-added nil
+		    :foreground "grey20"
+		    :background "YellowGreen")
+(set-face-attribute 'diff-removed nil
+		    :background "firebrick4")
+(set-face-attribute 'diff-refine-removed nil
+		    :foreground "grey20"
+		    :background "tomato1")
+(set-face-attribute 'diff-header nil
+		    :background "DodgerBlue4"
+		    :foreground "white")
+(set-face-attribute 'diff-file-header nil
+		    :background nil)
