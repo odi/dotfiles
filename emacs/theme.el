@@ -20,6 +20,11 @@
 		    :background "MediumPurple4"
 		    :box nil)
 
+;; mouse face
+(set-face-attribute 'mouse nil
+		    :foreground "black"
+		    :background "tomato1")
+
 ;; Jabber faces
 (set-face-attribute 'jabber-roster-user-online nil
 		    :foreground "GreenYellow"
@@ -153,6 +158,12 @@
 		    :background "grey15"
 		    :weight 'bold
 		    :box "grey50")
+(set-face-attribute 'notmuch-crypto-part-header nil
+		    :background "OrangeRed2"
+		    :foreground "white")
+(set-face-attribute 'message-mml nil
+		    :background "OliveDrab"
+		    :foreground "white")
 
 ;; haskell
 (set-face-attribute 'haskell-warning-face nil
