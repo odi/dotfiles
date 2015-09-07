@@ -148,8 +148,36 @@
 (add-to-list 'load-path "~/.emacs.d/elisp/org-magit")
 (require 'org-magit)
 
+(require 'org-protocol)
+
+(defadvice org-capture
+  (after make-full-window-frame activate)
+  "Advise capture to be the only window when used as a popup"
+  (if (equal "emacs-capture" (frame-parameter nil 'name))
+      (delete-other-windows)))
+
+(defadvice org-capture-finalize
+    (after delete-capture-frame activate)
+  "Advise capture-finalize to close the frame"
+  (if (equal "emacs-capture" (frame-parameter nil 'name))
+      (delete-frame)))
+
+;; disable current task in mode-line
+(setq org-mode-line-string "")
+(setq org-clock-clocked-in-display nil)
+
+;; set key binding for splitting interval
 (global-set-key (kbd "C-c s") 'org-clock-split-current-interval)
 
+;; TODO: add time in front of the splittet timestamp
+;; e.g.
+;;   CLOCK: [2015-08-06 Thu 07:00]--[2015-08-06 Thu 16:00] =>  9:00
+;; to
+;;   CLOCK: [2015-08-06 Thu 12:00]--[2015-08-06 Thu 16:00] =>  4:00
+;;   CLOCK: [2015-08-06 Thu 07:00]--[2015-08-06 Thu 11:30] =>  4:30
+;; currently:
+;;   CLOCK: [2015-08-06 Thu 11:30]--[2015-08-06 Thu 16:00] =>  4:30
+;;   CLOCK: [2015-08-06 Thu 07:00]--[2015-08-06 Thu 11:30] =>  4:30
 (defun org-clock-split-current-interval (end-as-default)
   "If this is a CLOCK line, split its clock time interval into two.
 Let the current time interval be A--C.  By default, this function
