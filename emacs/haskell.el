@@ -4,14 +4,14 @@
 (require 'haskell-decl-scan)
 (require 'haskell-interactive-mode)
 (require 'haskell-process)
-(require 'haskell-font-lock)
+;;(require 'haskell-font-lock)
 ;; ;;(require 'haskell-unicode-input-method)
 ;; (require 'w3m)
 ;; (require 'w3m-haddock)
 
-;; ;; turn on unicode input
-;; (require 'haskell-unicode-input-method)
-;; (add-hook 'haskell-mode-hook 'turn-on-haskell-unicode-input-method)
+;; turn on unicode input
+(require 'haskell-unicode-input-method)
+(add-hook 'haskell-mode-hook 'turn-on-haskell-unicode-input-method)
 
 ;; ## TEST ## hi2 indentation
 ;; https://github.com/nilcons/hi2
@@ -19,6 +19,10 @@
 (require 'hi2)
 (add-hook 'haskell-mode-hook 'turn-on-hi2)
 (setq hi2-layout-offset 4)
+(setq hi2-ifte-offset 4)
+(setq hi2-left-offset 4)
+(setq hi2-where-pre-offset 4)
+(setq hi2-where-post-offset 4)
 
 ;; use indent-guide
 (add-hook 'haskell-mode-hook 'indent-guide-mode)
