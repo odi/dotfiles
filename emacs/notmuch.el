@@ -29,14 +29,16 @@
 	(".*" . "priv/sent")))
 
 ;; show newest messages first in the search view
-(setq notmuch-search-oldest-first nil)
+(setq notmuch-search-oldest-first t)
+
+;;(notmuch-crypto-process-mime t)
 
 ;; do not indent my messages
 (setq notmuch-show-indent-messages-width 0)
 
 ;; define archiving tags
 (setq notmuch-archive-tags
-      '("+archived" "-inbox"))
+      '("+archived" "-inbox" "-flagged"))
 
 ;; saved searches
 (setq notmuch-saved-searches
@@ -141,7 +143,7 @@
 
 ;; toggle tag for muting threads
 ;; this is only useful in the search-mode-map
-(define-key notmuch-search-mode-map "k"
+(define-key notmuch-search-mode-map ","
   (lambda ()
     "toggle muting a whole thread"
     (interactive)
