@@ -1,15 +1,25 @@
 ;; default face - dark theme
 (set-face-attribute 'default nil
-		    :background "#111"
+		    ;; :background "#111"
+		    :background "#002b36"
 		    :foreground "#fff")
+
+;; (set-face-attribute 'mode-line nil
+;; 		    :background "grey15"
+;; 		    :foreground "white"
+;; 		    :box nil)
+;; (set-face-attribute 'mode-line-inactive nil
+;; 		    :background "grey10"
+;; 		    :box "grey10")
 
 (set-face-attribute 'mode-line nil
 		    :background "grey15"
 		    :foreground "white"
-		    :box "grey50")
+		    :box "grey20")
 (set-face-attribute 'mode-line-inactive nil
 		    :background "grey10"
-		    :box "grey10")
+		    :foreground "grey40"
+		    :box "grey20")
 
 ;; default base faces
 (set-face-attribute 'link nil
@@ -18,7 +28,14 @@
 		    :background "DarkOrchid4")
 (set-face-attribute 'hl-line nil
 		    :background "MediumPurple4"
+		    :weight 'bold
 		    :box nil)
+(set-face-attribute 'font-lock-comment-face nil
+		    :foreground "CadetBlue4")
+(set-face-attribute 'font-lock-doc-face nil
+		    :foreground "CadetBlue3")
+(set-face-attribute 'font-lock-string-face nil
+		    :foreground "LightGoldenrod1")
 
 ;; mouse face
 (set-face-attribute 'mouse nil
@@ -95,7 +112,8 @@
 
 ;; helm
 (set-face-attribute 'helm-selection nil
-		    :background "RoyalBlue4"
+		    :background nil
+		    :inherit 'hl-line
 		    :underline nil)
 (set-face-attribute 'helm-source-header nil
 		    :background "tomato4"
@@ -112,8 +130,8 @@
 		    :background nil
 		    :weight 'bold)
 (set-face-attribute 'helm-grep-match nil
-		    :foreground "goldenrod1"
-		    :background nil)
+		    :foreground "grey10"
+		    :background "goldenrod1")
 (set-face-attribute 'helm-grep-file nil
 		    :foreground "magenta3")
 (set-face-attribute 'helm-grep-lineno nil
@@ -162,8 +180,8 @@
 		    :background "OrangeRed2"
 		    :foreground "white")
 (set-face-attribute 'message-mml nil
-		    :background "OliveDrab"
-		    :foreground "white")
+		    :background nil
+		    :foreground "PaleGreen3")
 
 ;; haskell
 (set-face-attribute 'haskell-warning-face nil
@@ -172,6 +190,16 @@
 (set-face-attribute 'haskell-error-face nil
 		    :background "grey15"
 		    :underline '(:style line :color "tomato1"))
+(set-face-attribute 'haskell-interactive-face-compile-warning nil
+		    :foreground "goldenrod1"
+		    :weight 'normal)
+(set-face-attribute 'haskell-definition-face nil
+		    :foreground "DodgerBlue1"
+		    :weight 'normal)
+(set-face-attribute 'haskell-keyword-face nil
+		    :foreground "PaleVioletRed")
+(set-face-attribute 'haskell-operator-face nil
+		    :foreground "tomato1")
 (set-face-attribute 'hi2-show-normal-face nil
 		    :underline "grey30")
 
@@ -189,17 +217,23 @@
 
 ;; diff
 (set-face-attribute 'diff-added nil
+		    :inherit nil
+		    :foreground "grey90"
 		    :background "DarkOliveGreen")
 (set-face-attribute 'diff-refine-added nil
-		    :foreground "grey20"
-		    :background "YellowGreen")
+		    :foreground "grey90"
+		    :background "DarkOliveGreen")
 (set-face-attribute 'diff-removed nil
-		    :background "firebrick4")
+		    :foreground "grey90"
+		    :background "IndianRed4")
 (set-face-attribute 'diff-refine-removed nil
-		    :foreground "grey20"
-		    :background "tomato1")
+		    :foreground "grey90"
+		    :background "IndianRed4")
 (set-face-attribute 'diff-header nil
-		    :background "DodgerBlue4"
-		    :foreground "white")
+		    :background "grey20"
+		    :foreground "SteelBlue1")
+(set-face-attribute 'diff-function nil
+		    :weight 'bold)
 (set-face-attribute 'diff-file-header nil
-		    :background nil)
+		    :background "grey20"
+		    :foreground "goldenrod")
