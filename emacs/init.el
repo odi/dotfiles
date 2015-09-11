@@ -56,7 +56,7 @@
 ;; default browser
 (setq browse-url-browser-function 'browse-url-generic
       browse-url-new-window-flag t
-      browse-url-generic-program "conkeror")
+      browse-url-generic-program "browser.sh")
 
 ;; load all my configurations which i'll not show to the public
 (load-file "~/etc/emacs/secure.el")
@@ -169,7 +169,25 @@
 (add-to-list 'load-path "~/.emacs.d/elisp/avy")
 (add-to-list 'load-path "~/.emacs.d/elisp/ace-window")
 (require 'ace-window)
+(setq aw-scope 'frame)
 (define-key global-map (kbd "M-o") 'ace-window)
+
+;; use engine-mode
+(add-to-list 'load-path "~/.emacs.d/elisp/engine-mode")
+(require 'engine-mode)
+(engine-mode t)
+
+(defengine hayoo
+  "http://hayoo.fh-wedel.de/?query=%s"
+  :keybinding "y")
+
+;; preserves me to close emacs accidentially
+(defun ask-before-closing ()
+  "Ask whether or not to close, and then close if y was pressed"
+  (interactive)
+  (if (y-or-n-p (format "Are you sure to quit emacs? "))
+      (save-buffers-kill-emacs)))
+(global-set-key (kbd "C-x C-c") 'ask-before-closing)
 
 ;; load theme
 ;; this should be the last 
