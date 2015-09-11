@@ -154,6 +154,12 @@
 ;; (require 'backups-mode)
 ;; (backups-mode-start)
 
+;; start ansi-term (zsh) with C-x C-a
+(define-key global-map (kbd "C-x C-a")
+  (lambda ()
+    (interactive)
+    (ansi-term "zsh")))
+
 ;; ## highlight-symbol
 (add-to-list 'load-path "~/.emacs.d/elisp/highlight-symbol.el")
 (require 'highlight-symbol)
@@ -161,9 +167,17 @@
 (define-key global-map (kbd "<f9>") 'highlight-symbol-next)
 (define-key global-map (kbd "M-<f9>") 'highlight-symbol-prev)
 
-;; use smart-mode-line
-(require 'smart-mode-line)
-(load-file "~/etc/emacs/smart-mode-line.el")
+;; short names for major modes
+(add-hook 'emacs-lisp-mode-hook (lambda () (setq mode-name "EL")))
+(add-hook 'haskell-mode-hook (lambda () (setq mode-name "HS")))
+(add-hook 'haskell-interactive-mode-hook (lambda () (setq mode-name "IntHS")))
+(add-hook 'notmuch-search-mode-hook (lambda () (setq mode-name "⚲")))
+
+;; diminish
+(load-file "~/etc/emacs/diminish.el")
+(diminish 'projectile-mode " P")
+(diminish 'yas-minor-mode "")
+(diminish 'git-gutter-mode "")
 
 ;; use ace-window
 (add-to-list 'load-path "~/.emacs.d/elisp/avy")
