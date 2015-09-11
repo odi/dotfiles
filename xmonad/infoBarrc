@@ -17,10 +17,10 @@ Config { commands = [ Run Date "%H:%M" "time" 30
        , template = "}{ \
          \<fc=#696969>%msync%</fc> %disku% \
 	 \<fc=#696969>Vol:</fc>%default:Master% \
-	 \<fc=#696969>Mail:</fc>[%minbox%<fc=#696969>ᵢ</fc>,%mwork%<fc=#696969>ᵥ</fc>,%mlists%<fc=#696969>ₗ</fc>,%mflag%][%mall%<fc=#696969>ₐ</fc>] \
+	 \<fc=#696969>Mail:[</fc>%minbox%<fc=#696969>ᵢ</fc>,%mwork%<fc=#696969>ᵥ</fc>,%mlists%<fc=#696969>ₗ|</fc>%mall%<fc=#696969>ₐ][</fc>%mflag%<fc=#696969>]</fc> \
          \<fc=#696969>Bat:</fc>%battery% \
          \<fc=#696969>Wifi:</fc>%wlp4s0wi% \
-         \%date% <fc=#1e90ff>[%week%]</fc> <fc=#fff>%time%</fc> "
+         \%date% <fc=#696969>[%week%]</fc> <fc=#fff>%time%</fc> "
        , font = "xft:monospace:pixelsize=8:weight=normal"
        , iconRoot = "/home/odi/.xmonad/icons"
        }
