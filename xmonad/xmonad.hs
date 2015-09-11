@@ -45,7 +45,7 @@ borderColor'  = cGrey
 modMask'      = mod4Mask
 editor        = "emacsclient -c -a \"emacs\" "
 dzenExec      = "dzen2"
-xmobarExec    = "xmobar -f " ++ defaultFont 16 "normal"
+xmobarExec    = "xmobar -f " ++ defaultFont 15 "normal"
 browser       = "/home/odi/bin/browser.sh"
 placesDB      = "/home/odi/.conkeror.mozdev.org/conkeror/l65w5mjs.odi/places.sqlite"
 
@@ -60,6 +60,7 @@ cBlack   = "#000000"
 cWhite   = "#ffffff"
 cGrey    = "#222222"
 cLGrey   = "#c0c0c0"
+cDGrey   = "#696969"
 
 -- font with parameterized size and weight
 -- TODO: maybe switch to `XMonad.Util.Font'.
@@ -91,11 +92,11 @@ promptConf = defaultXPConfig
 logHook' :: Handle -> X ()
 logHook' h = dynamicLogWithPP $ defaultPP
   { ppOutput  = hPutStrLn h
-  , ppTitle   = dzenColor cGrey cYellow . shorten 70 . wrap " " " "
+  , ppTitle   = dzenColor cGreen "" . shorten 70 . wrap " " " "
   , ppCurrent = dzenColor cYellow "" . wrap "[" "]"
   , ppLayout  = dzenColor cBlue ""
   , ppUrgent  = dzenColor cBlack cRed . wrap "[" "]"
-  , ppSep     = " • "
+  , ppSep     = dzenColor cDGrey "" " • "
   , ppOrder   = \(ws:l:t:_) -> [ws,l,t]
   }
 
@@ -122,10 +123,13 @@ keys_ (XConfig {modMask = modm}) = M.fromList
   , ((modm .|. shiftMask, xK_l), spawn "lock.sh")
   , ((modm, xK_s), searchEnginePrompt promptConf browser S.google searchEngineMap)
   , ((modm, xK_r), prompt ("xterm" ++ " -e") promptConf)
-    -- get keysym from `xev'
---  , ((0, 0x1008ff13), spawn "amixer sset Master 2%+")  -- increase volume
-  , ((0, 0x1008ff13), spawn "avol.sh inc")  -- increase volume
-  , ((0, 0x1008ff11), spawn "avol.sh dec")  -- decrease volume
+    --
+    -- Volume controls: get keysym from `xev'
+  , ((0, 0x1008ff12), spawn "amixer -q sset Master toggle") -- toggle mute/unmute
+  , ((0, 0x1008ff13), spawn "amixer -q sset Master 1%+")    -- increase volume
+  , ((0, 0x1008ff11), spawn "amixer -q sset Master 1%-")    -- decrease volume
+    --
+    -- Test keys ...
   , ((modm .|. shiftMask, xK_n), spawn "emacs-float.sh capture_note")
 --  , ((modm, xK_s), searchEnginePrompt promptConf duckduck searchEngineMap)
 --  , ((modm, xK_o), urlHistoryPrompt promptConf (browserHistory Conkeror 
@@ -264,7 +268,7 @@ workspaceBar w a x =
   unwords [ dzenExec
           , "-w", show w, "-ta", a, "-x", show x
           , "-bg", "'" ++ cBlack ++ "'"
-          , "-fn", "'" ++ defaultFont 16 "normal" ++ "'"
+          , "-fn", "'" ++ defaultFont 15 "normal" ++ "'"
           ]
 
 -- call `xmobar' with a configuration-file
