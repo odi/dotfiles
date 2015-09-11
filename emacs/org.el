@@ -224,3 +224,15 @@ interval, so that this line can, e.g., be moved to another entry."
                          to
                          (if use-start-as-default middle end))
                  (org-clock-update-time-maybe))))))))
+
+;; because of a bug in the report-table
+;; http://emacs.stackexchange.com/questions/9528/is-it-possible-to-remove-emsp-from-clock-report-but-preserve-indentation
+(defun my-org-clocktable-indent-string (level)
+  (if (= level 1)
+      ""
+    (let ((str "`"))
+      (while (> level 2)
+        (setq level (1- level)
+              str (concat str "--")))
+      (concat str "-> "))))
+(advice-add 'org-clocktable-indent-string :override #'my-org-clocktable-indent-string)
