@@ -2,15 +2,7 @@
 (set-face-attribute 'default nil
 		    ;; :background "#111"
 		    :background "#002b36"
-		    :foreground "#fff")
-
-;; (set-face-attribute 'mode-line nil
-;; 		    :background "grey15"
-;; 		    :foreground "white"
-;; 		    :box nil)
-;; (set-face-attribute 'mode-line-inactive nil
-;; 		    :background "grey10"
-;; 		    :box "grey10")
+		    :foreground "white")
 
 (set-face-attribute 'mode-line nil
 		    :background "grey15"
@@ -141,14 +133,17 @@
 
 ;; notmuch
 (set-face-attribute 'notmuch-wash-cited-text nil
-		    :foreground "SteelBlue4")
+		    :foreground nil
+		    :inherit 'font-lock-comment-face)
 (set-face-attribute 'notmuch-wash-toggle-button nil
-		    :foreground "SteelBlue3")
+		    :foreground nil
+		    :inherit 'font-lock-doc-face)
 (set-face-attribute 'notmuch-tag-face nil
 		    :foreground "DodgerBlue"
 		    :weight 'normal
 		    :height 120)
 (set-face-attribute 'notmuch-tree-match-tag-face nil
+		    :foreground nil
 		    :inherit 'notmuch-tag-face)
 (set-face-attribute 'notmuch-search-matching-authors nil
 		    :foreground "tomato1")
@@ -162,6 +157,15 @@
 (set-face-attribute 'notmuch-tree-match-date-face nil
 		    :foreground nil
 		    :inherit 'notmuch-search-date)
+(set-face-attribute 'notmuch-message-summary-face nil
+		    :background "grey15"
+		    :weight 'bold
+		    :box "grey50")
+(set-face-attribute 'notmuch-crypto-part-header nil
+		    :background "OrangeRed2"
+		    :foreground "white")
+
+;; message-mode
 (set-face-attribute 'message-header-subject nil
 		    :foreground "goldenrod1"
 		    :weight 'bold)
@@ -171,14 +175,13 @@
 		    :foreground "DodgerBlue"
 		    :weight 'normal)
 (set-face-attribute 'message-header-cc nil
+		    :foreground "DodgerBlue"
+		    :weight 'normal)
+(set-face-attribute 'message-header-cc nil
 		    :inherit 'message-header-to)
-(set-face-attribute 'notmuch-message-summary-face nil
-		    :background "grey15"
-		    :weight 'bold
-		    :box "grey50")
-(set-face-attribute 'notmuch-crypto-part-header nil
-		    :background "OrangeRed2"
-		    :foreground "white")
+(set-face-attribute 'message-cited-text nil
+		    :foreground nil
+		    :inherit 'font-lock-comment-face)
 (set-face-attribute 'message-mml nil
 		    :background nil
 		    :foreground "PaleGreen3")
