@@ -1,66 +1,16 @@
 ;; ## haskell-mode
 
 (require 'haskell)
+
+;; turn on scanning of declerations
 (require 'haskell-decl-scan)
-(require 'haskell-interactive-mode)
-(require 'haskell-process)
-;;(require 'haskell-font-lock)
-;; ;;(require 'haskell-unicode-input-method)
-;; (require 'w3m)
-;; (require 'w3m-haddock)
-
-;; turn on unicode input
-(require 'haskell-unicode-input-method)
-(add-hook 'haskell-mode-hook 'turn-on-haskell-unicode-input-method)
-
-;; ## TEST ## hi2 indentation
-;; https://github.com/nilcons/hi2
-(add-to-list 'load-path "~/.emacs.d/elisp/hi2")
-(require 'hi2)
-(add-hook 'haskell-mode-hook 'turn-on-hi2)
-(setq hi2-layout-offset 4)
-(setq hi2-ifte-offset 4)
-(setq hi2-left-offset 4)
-(setq hi2-where-pre-offset 4)
-(setq hi2-where-post-offset 4)
-
-;; use indent-guide
-(add-hook 'haskell-mode-hook 'indent-guide-mode)
-
-;; ;; haskell indentation
-;; (require 'haskell-indentation)
-;; (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
-;; (setq haskell-indentation-layout-offset 4
-;;       haskell-indentation-starter-offset 4
-;;       haskell-indentation-left-offset 4
-;;       haskell-indentation-ifte-offset 4
-;;       haskell-indentation-where-pre-offset 4
-;;       haskell-indentation-where-post-offset 4)
-
 (add-hook 'haskell-mode-hook 'turn-on-haskell-decl-scan)
-(add-hook 'haskell-mode-hook 'interactive-haskell-mode)
-(add-hook 'haskell-mode-hook 'git-gutter-mode)
 
-;; TODO: does not work properly
-;;(add-hook 'haskell-mode-hook 'haskell-doc-current-info)
+;; turn on indentation
+(require 'haskell-indentation)
+(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 
-(custom-set-variables
- '(haskell-font-lock-symbols 'unicode))
-;; load file again because of not reading haskell-font-lock-symbols
-(load-file "~/.emacs.d/elisp/haskell-mode/haskell-font-lock.el")
-
-(setq haskell-process-log t)
-
-;; use nix-shell as wrapper around 'cabal repl'
-(setq haskell-process-wrapper-function
-      (lambda (argv)
-	(append (list "nix-shell" "--command")
-		(list (mapconcat 'identity argv " ")))))
-
-;; ;; search online-hoogle instead of local hoogle-db
-;; (setq haskell-hoogle-command nil)
-
-;; indentation configure
+;; indentation configure -> default 4 spaces
 (setq haskell-indentation-layout-offset 4
       haskell-indentation-starter-offset 4
       haskell-indentation-left-offset 4
@@ -68,15 +18,43 @@
       haskell-indentation-where-pre-offset 4
       haskell-indentation-where-post-offset 4)
 
-;; (define-key haskell-mode-map (kbd "C-c l") 'haskell-check)
+;; turn on unicode input
+(require 'haskell-unicode-input-method)
+(add-hook 'haskell-mode-hook 'turn-on-haskell-unicode-input-method)
 
-;; (setq compile-command "nix-shell --command 'cabal build'")
-;; (define-key haskell-mode-map (kbd "C-c ,") 'compile)
+;; turn on interactive mode
+(require 'haskell-process)
+(require 'haskell-interactive-mode)
+(add-hook 'haskell-mode-hook 'interactive-haskell-mode)
+(setq haskell-process-log t)
 
-;; ;; call hoogle online w/ eww
-;; (defun eww-hoogle (str)
-;;   (interactive "sEnter hoogle search string: ")
-;;   (eww (concat "https://www.haskell.org/hoogle/?hoogle=" str)))
+;; turn on git-gutter by default
+(add-hook 'haskell-mode-hook 'git-gutter-mode)
+
+;; define hydra for haskell-stuff
+(require 'hydra)
+(defhydra hydra-haskell-dev (:hint nil)
+  "
+Haskell
+_i_: toggle indent-guide   _._: jump to
+_g_: git gutter            _y_: search in hayoo
+_l_: load/reload
+_r_: run in ROOT
+"
+  ("i" indent-guide-mode :color blue)
+  ("g" git-gutter-mode :color blue)
+  ("." haskell-mode-jump-to-def-or-tag :color blue)
+  ("y" engine/search-hayoo :color blue)
+  ("l" haskell-process-load-or-reload :color blue)
+  ("r" projectile-run-shell-command-in-root :color blue)
+  ("q" nil))
+(define-key haskell-mode-map (kbd "C-c C-h") 'hydra-haskell-dev/body)
+
+;; use nix-shell as wrapper around 'cabal repl'
+(setq haskell-process-wrapper-function
+      (lambda (argv)
+	(append (list "nix-shell" "--command")
+		(list (mapconcat 'identity argv " ")))))
 
 ;; turn on presentation-mode for C-c C-i and C-c C-t
 (setq haskell-process-use-presentation-mode t)
@@ -90,3 +68,12 @@
 
 ;; keyboard shortcuts
 (define-key haskell-mode-map (kbd "C-`") 'haskell-interactive-bring)
+
+;; define search-engines
+(defengine hayoo
+  "http://hayoo.fh-wedel.de/?query=%s"
+  :keybinding "y")
+(defengine haskell-wiki
+  "https://wiki.haskell.org/Special:Search?search=%s"
+  :keybinding "w")
+
