@@ -15,8 +15,8 @@
       haskell-indentation-starter-offset 4
       haskell-indentation-left-offset 4
       haskell-indentation-ifte-offset 4
-      haskell-indentation-where-pre-offset 4
-      haskell-indentation-where-post-offset 4)
+      haskell-indentation-where-pre-offset 2
+      haskell-indentation-where-post-offset 2)
 
 ;; turn on unicode input
 (require 'haskell-unicode-input-method)
