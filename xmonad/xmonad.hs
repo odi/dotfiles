@@ -119,6 +119,7 @@ keys_ (XConfig {modMask = modm}) = M.fromList
   , ((modm, xK_x), xmonadPrompt promptConf)
   , ((modm, xK_p), shellPrompt promptConf)
   , ((modm, xK_BackSpace), focusUrgent)
+  , ((modm .|. shiftMask, xK_e), spawn "eclient.sh")
   , ((modm, xK_q), spawn "pkill dzen2; pkill xmobar" >> restart "xmonad" True)
   , ((modm .|. shiftMask, xK_l), spawn "lock.sh")
   , ((modm, xK_s), searchEnginePrompt promptConf browser S.google searchEngineMap)
@@ -277,6 +278,12 @@ xmobarBar fp = unwords [ xmobarExec, fp ]
 
 getFontByHost :: String
 getFontByHost = undefined
+
+-- | This will be executed at startup.
+-- Everytime xmonad will be restarted this function will be called!
+startUp :: X ()
+startUp = do
+    spawn "xsetroot -solid '#1a1a1a'"
 
 main :: IO ()
 main = do
