@@ -88,7 +88,8 @@ alias h='history'
 alias feh='feh -F'
 alias 1='cd -0'
 alias gcal='gcalcli'
-alias ne='nix-env -f ~/nixpkgs'
+alias nep='nix-env -f ~/.nixpkgs/config.nix -A'
+alias ag='ag --color-line-number="0;35" --color-path="0;34" --color-match="01;33"'
 
 # prompt
 # calculate width of the terminal with $(echo $COLUMNS/2 | bc)
