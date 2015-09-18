@@ -14,7 +14,8 @@ xterm*saveLines:1000
 ! 5/13 ... magenta/bold magenta
 ! 6/14 ... cyan/bold cyan
 
-xterm*background:#000000
+!xterm*background:#000000
+xterm*background:#262626
 xterm*foreground:#ffffff
 xterm*color1:#ff6347
 xterm*color9:#ff6347
