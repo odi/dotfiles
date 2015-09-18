@@ -1,38 +1,50 @@
-;; default face - dark theme
-(set-face-attribute 'default nil
-		    ;; :background "#111"
-		    :background "#002b36"
-		    :foreground "white")
+
+;; set default face within custom-set-face because of emacs --daemon
+;; has problems to set font with set-face-attribute for new frames
+(custom-set-faces
+ '(default ((t (:inherit nil
+			 :font "DejaVu Sans Mono"
+			 :height 123
+			 :background "grey13"
+			 :foreground "white"))))
+ '(tooltip ((t (:inherit nil
+ 			 :font "DejaVu Sans Mono"
+ 			 :height 0.8
+ 			 :background "grey20"
+ 			 :foreground "white")))))
 
 (set-face-attribute 'mode-line nil
-		    :background "grey15"
-		    :foreground "white"
-		    :box "grey20")
+		    :background "grey20"
+		    :foreground "LightCyan1"
+		    :box "grey30")
 (set-face-attribute 'mode-line-inactive nil
 		    :background "grey10"
 		    :foreground "grey40"
 		    :box "grey20")
+(set-face-attribute 'fringe nil
+		    :background "grey7")
 
 ;; default base faces
 (set-face-attribute 'link nil
 		    :foreground "DodgerBlue")
 (set-face-attribute 'region nil
-		    :background "DarkOrchid4")
+		    :inverse-video t)
 (set-face-attribute 'hl-line nil
-		    :background "MediumPurple4"
-		    :weight 'bold
-		    :box nil)
+		    :background "grey30"
+		    :weight 'bold)
 (set-face-attribute 'font-lock-comment-face nil
-		    :foreground "CadetBlue4")
+		    :foreground "grey50")
 (set-face-attribute 'font-lock-doc-face nil
-		    :foreground "CadetBlue3")
+		    :foreground "grey60")
 (set-face-attribute 'font-lock-string-face nil
-		    :foreground "LightGoldenrod1")
+		    :foreground "LightSalmon1")
+(set-face-attribute 'font-lock-keyword-face nil
+		    :foreground "VioletRed1")
 
 ;; mouse face
 (set-face-attribute 'mouse nil
-		    :foreground "black"
-		    :background "tomato1")
+		    :foreground "white"
+		    :background "black")
 
 ;; Jabber faces
 (set-face-attribute 'jabber-roster-user-online nil
@@ -56,10 +68,10 @@
 (set-face-attribute 'jabber-rare-time-face nil
 		    :foreground "DarkGoldenrod1")
 (set-face-attribute 'jabber-activity-face nil
-		    :foreground "YellowGreen"
+		    :foreground "ForestGreen"
 		    :weight 'normal)
 (set-face-attribute 'jabber-activity-personal-face nil
-		    :foreground "YellowGreen"
+		    :foreground "ForestGreen"
 		    :weight 'bold)
 
 ;; git gutter
@@ -69,9 +81,9 @@
 
 ;; org-mode
 (setq org-todo-keyword-faces
-      '(("TODO" :foreground "firebrick" :weight bold)
+      '(("TODO" :foreground "tomato1" :weight bold)
 	("NEXT" :foreground "DarkCyan" :weight bold)
-	("DONE" :foreground "LimeGreen" :weight bold)
+	("DONE" :foreground "PaleGreen" :weight bold)
 	("WAIT" :foreground "orange" :weight bold)
 	("HOLD" :foreground "magenta" :weight bold)
 	("CANC" :foreground "DarkGoldenrod" :weight bold)))
@@ -84,7 +96,7 @@
 
 ;; ansi-colors
 (setq ansi-color-names-vector
-      [ "black" "firebrick1" "LimeGreen"
+      [ "black" "firebrick1" "YellowGreen"
 	"DarkGoldenrod1" "DodgerBlue" "magenta3"
 	"cyan3" "gray90" ])
 (setq ansi-color-map (ansi-color-make-color-map))
@@ -104,19 +116,13 @@
 
 ;; helm
 (set-face-attribute 'helm-selection nil
-		    :background nil
-		    :inherit 'hl-line
-		    :underline nil)
-(set-face-attribute 'helm-source-header nil
-		    :background "tomato4"
-		    :foreground "white"
-		    :height 1.0
+		    :background "grey30"
 		    :weight 'bold
-		    :font "Inconsolata-14")
-(set-face-attribute 'helm-buffer-file nil
-		    :foreground "GreenYellow")
-(set-face-attribute 'helm-buffer-process nil
-		    :foreground "SeaGreen")
+		    :underline t)
+(set-face-attribute 'helm-source-header nil
+		    :background "DarkSlateGray3"
+		    :foreground "grey10"
+		    :height 1.0)
 (set-face-attribute 'helm-buffer-directory nil
 		    :foreground "DodgerBlue2"
 		    :background nil
@@ -127,9 +133,11 @@
 (set-face-attribute 'helm-grep-file nil
 		    :foreground "magenta3")
 (set-face-attribute 'helm-grep-lineno nil
-		    :foreground "GreenYellow")
+		    :foreground "ForestYellow")
 (set-face-attribute 'helm-grep-finish nil
-		    :foreground "YellowGreen")
+		    :foreground "ForestGreen")
+;;(set-face-attribute 'helm-M-x-key nil
+;;		    :foreground "magenta")
 
 ;; notmuch
 (set-face-attribute 'notmuch-wash-cited-text nil
@@ -158,17 +166,17 @@
 		    :foreground nil
 		    :inherit 'notmuch-search-date)
 (set-face-attribute 'notmuch-message-summary-face nil
-		    :background "grey15"
-		    :weight 'bold
-		    :box "grey50")
+		    :background "DarkSlateGrey"
+		    :weight 'normal
+		    :box nil)
 (set-face-attribute 'notmuch-crypto-part-header nil
-		    :background "OrangeRed2"
-		    :foreground "white")
+		    :background nil
+		    :foreground "tomato1")
 
 ;; message-mode
 (set-face-attribute 'message-header-subject nil
 		    :foreground "goldenrod1"
-		    :weight 'bold)
+		    :weight 'normal)
 (set-face-attribute 'message-header-name nil
 		    :foreground "YellowGreen")
 (set-face-attribute 'message-header-to nil
@@ -180,8 +188,7 @@
 (set-face-attribute 'message-header-cc nil
 		    :inherit 'message-header-to)
 (set-face-attribute 'message-cited-text nil
-		    :foreground nil
-		    :inherit 'font-lock-comment-face)
+		    :foreground "grey40")
 (set-face-attribute 'message-mml nil
 		    :background nil
 		    :foreground "PaleGreen3")
@@ -200,11 +207,11 @@
 		    :foreground "DodgerBlue1"
 		    :weight 'normal)
 (set-face-attribute 'haskell-keyword-face nil
-		    :foreground "PaleVioletRed")
+		    :foreground "VioletRed1")
 (set-face-attribute 'haskell-operator-face nil
-		    :foreground "tomato1")
-(set-face-attribute 'hi2-show-normal-face nil
-		    :underline "grey30")
+		    :foreground "Goldenrod1")
+(set-face-attribute 'haskell-pragma-face nil
+		    :foreground "tan3")
 
 ;; hydra
 (set-face-attribute 'hydra-face-blue nil
@@ -213,8 +220,8 @@
 		    :foreground "tomato1")
 
 (set-face-attribute 'aw-leading-char-face nil
-		    :background "magenta"
-		    :foreground "grey15"
+		    :background nil
+		    :foreground "Goldenrod1"
 		    :weight 'bold
 		    :height 1.2)
 
