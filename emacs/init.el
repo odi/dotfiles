@@ -27,19 +27,6 @@
 ;; set title format of the frames
 (setq frame-title-format '("" "emacs :: %b"))
 
-;; do host specific configurations
-;; currently i use following hosts: rise-io, io
-(cond
- ((string= system-name "rise-io")
-  ;; set default font
-  (set-face-attribute 'default nil
-		      :font "DejaVu Sans Mono"
-		      :height 123))
- ((string= system-name "io")
-  ;; set default font
-  (set-face-attribute 'default nil
-		      :font "DejaVu Sans Mono 15")))
-
 ;; yank content at point and from primary selection method
 (setq mouse-yank-at-point t)
 (setq x-select-enable-primary t)
@@ -107,6 +94,14 @@
 ;; ## helm, helm-swoop, ...
 (load-file "~/etc/emacs/helm.el")
 
+;; ## hydra
+(add-to-list 'load-path "~/.emacs.d/elisp/hydra")
+(load-file "~/etc/emacs/hydra.el")
+
+;; use engine-mode
+(require 'engine-mode)
+(engine-mode t)
+
 ;; ## indent-guide
 ;; https://github.com/zk-phi/indent-guide
 ;; TODO: move to haskell??
@@ -134,8 +129,6 @@
 (projectile-global-mode)
 
 ;; ## yasnippet
-;; TODO: remove this if yasnippet is in nixpkgs
-(add-to-list 'load-path "~/.emacs.d/elisp/yasnippet")
 (require 'yasnippet)
 (setq yas-snippet-dirs
       '("~/etc/emacs/yasnippet"))
@@ -143,10 +136,6 @@
 
 ;; ## notmuch
 (load-file "~/etc/emacs/notmuch.el")
-
-;; ## hydra
-(add-to-list 'load-path "~/.emacs.d/elisp/hydra")
-(load-file "~/etc/emacs/hydra.el")
 
 ;; ## TEST ## backups-mode
 ;; https://github.com/chadbraunduin/backups-mode
@@ -175,25 +164,26 @@
 
 ;; diminish
 (load-file "~/etc/emacs/diminish.el")
-(diminish 'projectile-mode " P")
 (diminish 'yas-minor-mode "")
 (diminish 'git-gutter-mode "")
 
 ;; use ace-window
-(add-to-list 'load-path "~/.emacs.d/elisp/avy")
+;;(add-to-list 'load-path "~/.emacs.d/elisp/avy")
 (add-to-list 'load-path "~/.emacs.d/elisp/ace-window")
 (require 'ace-window)
 (setq aw-scope 'frame)
 (define-key global-map (kbd "M-o") 'ace-window)
 
-;; use engine-mode
-(add-to-list 'load-path "~/.emacs.d/elisp/engine-mode")
-(require 'engine-mode)
-(engine-mode t)
+;; TODO: does not work with emacs --daemon!
+;; ;; elfeed
+;; (add-to-list 'load-path "~/.emacs.d/elisp/elfeed")
+;; (require 'elfeed)
 
-(defengine hayoo
-  "http://hayoo.fh-wedel.de/?query=%s"
-  :keybinding "y")
+;; (setq elfeed-feeds
+;;       '(("http://www.functionalgeekery.com/feed/" fp podcast)
+;; 	("http://planet.nixos.org/rss20.xml" nixos)
+;; 	("http://planet.haskell.org/rss20.xml" haskell)
+;; 	("http://www.haskellcast.com/feed.xml" haskell podcast))
 
 ;; preserves me to close emacs accidentially
 (defun ask-before-closing ()
