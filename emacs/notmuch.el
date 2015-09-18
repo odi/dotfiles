@@ -29,7 +29,7 @@
 	(".*" . "priv/sent")))
 
 ;; show newest messages first in the search view
-(setq notmuch-search-oldest-first t)
+(setq notmuch-search-oldest-first nil)
 
 ;;(notmuch-crypto-process-mime t)
 
@@ -118,7 +118,28 @@
 ;; ## keyboard shortcuts
 
 ;; goto notmuch-hello
-(define-key global-map (kbd "C-c n") 'notmuch-hello)
+(define-key global-map (kbd "C-c n n") 'notmuch-hello)
+(define-key global-map (kbd "C-c n s") 'notmuch-search)
+(define-key global-map (kbd "C-c n u")
+  (lambda ()
+    (interactive)
+    (notmuch-search "tag:unread")))
+(define-key global-map (kbd "C-c n i")
+  (lambda ()
+    (interactive)
+    (notmuch-search "tag:unread and tag:inbox")))
+(define-key global-map (kbd "C-c n w")
+  (lambda ()
+    (interactive)
+    (notmuch-search "tag:unread and tag:work")))
+(define-key global-map (kbd "C-c n l")
+  (lambda ()
+    (interactive)
+    (notmuch-search "tag:unread and tag:list")))
+(define-key global-map (kbd "C-c n f")
+  (lambda ()
+    (interactive)
+    (notmuch-search "tag:flagged")))
 
 ;; toggle deleted tag in show-mode
 (define-key notmuch-show-mode-map "d"
@@ -136,10 +157,12 @@
   (lambda ()
     "toggle deleted tag for thread"    ;; in notmuch-search-mode
     (interactive)
-    (if (member "deleted" (notmuch-search-get-tags))
-	(notmuch-search-tag (list "-deleted"))
-      ((notmuch-search-tag (list "+deleted" "-unread" "-flagged"))
-       (notmuch-search-next-thread)))))
+    (notmuch-search-tag (list "+deleted" "-unread" "-flagged"))
+    (notmuch-search-next-thread)))
+    ;; (if (member "deleted" (notmuch-search-get-tags))
+    ;; 	(notmuch-search-tag (list "-deleted"))
+    ;;   ((notmuch-search-tag (list "+deleted" "-unread" "-flagged"))
+    ;;    (notmuch-search-next-thread)))))
 
 ;; toggle tag for muting threads
 ;; this is only useful in the search-mode-map
@@ -152,26 +175,39 @@
       (notmuch-search-tag (list "+muted" "-unread")))
     (notmuch-search-next-thread)))
 
+(define-key notmuch-show-stash-map "g"
+  (lambda ()
+    "Copy a link to gmane archive of the current message to kill-ring"
+    (interactive)
+    (notmuch-common-do-stash
+     (concat "http://mid.gmane.org/"
+	     (replace-regexp-in-string
+	      "^id:\"\\(.*\\)\"$" "\\1" (notmuch-show-get-message-id t))))))
+
 ;; edit message
 ;; call a seperate script `edit-mail.sh'
-(define-key 'notmuch-show-mode-map "E"
-  (lambda ()
-    (interactive)
-    (let ((mid (notmuch-show-get-message-id)))
-      (message mid)
-      (start-process "edit-email" nil "edit-mail.sh" mid))))
+;; (define-key 'notmuch-show-mode-map "E"
+;;   (lambda ()
+;;     (interactive)
+;;     (let ((mid (notmuch-show-get-message-id)))
+;;       (message mid)
+;;       (start-process "edit-email" nil "edit-mail.sh" mid))))
 
 ;; call sync-mail.sh
 (defun notmuch-sync ()
   (interactive)
   (async-shell-command "sync-mail.sh" "*syncing mail*" nil))
 
+(defun notmuch-cleanup ()
+  (interactive)
+  (async-shell-command "notmuch-cleanup.sh" "*notmuch cleanup*" nil))
+
 ;; in notmuch-hello start syncing messages with G
-(define-key 'notmuch-hello-mode-map "G"
-  (lambda ()
-    "syncing emails with notmuch-cleanup.sh and offlineimap"
-    (interactive)
-    (notmuch-sync)))
+(define-key 'notmuch-hello-mode-map "G" nil)
+  ;; (lambda ()
+  ;;   "syncing emails with notmuch-cleanup.sh and offlineimap"
+  ;;   (interactive)
+  ;;   (notmuch-sync)))
 
 ;; define D for showing patches in diff-mode in notmuch-show-mode
 (define-key 'notmuch-show-mode-map "D" 'notmuch-show-view-as-patch)
