@@ -1,3 +1,5 @@
+;;(load-file "~/.emacs.d/elisp/smart-mode-line/themes/smart-mode-line-powerline-theme.el")
+
 (setq sml/no-confirm-load-theme t)
 
 (setq sml/theme 'dark)
@@ -24,8 +26,10 @@
 (set-face-attribute 'sml/discharging nil
 		    :foreground "firebrick1")
 (set-face-attribute 'sml/vc nil
-		    :foreground "LimeGreen")
+		    :foreground "chartreuse1"
+		    :weight 'bold)
 (set-face-attribute 'sml/vc-edited nil
-		    :foreground "VioletRed1")
+		    :foreground "DodgerBlue1"
+		    :weight 'bold)
 (set-face-attribute 'sml/modified nil
 		    :foreground "firebrick1")
