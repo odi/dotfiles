@@ -14,6 +14,13 @@
 (defun odi/xmonad-notify (&optional from buffer text proposed-alert)
   (odi/x-urgendcy-hint (selected-frame) t))
 
+(defun odi/twmnc-notify (from buffer text proposed-alert)
+  (if (< (length text) 15)
+      (with-temp-buffer
+	(shell-command (format "twmnc -t \"Jabber\" -c \"%s: %s\"" proposed-alert text)))
+    (with-temp-buffer
+      (shell-command (format "twmnc -t \"Jabber\" -c \"%s: %s\"" proposed-alert (concat (substring text 0 15) " …"))))))
+
 ;; ## Jabber
 ;; http://emacs-jabber.sourceforge.net/
 (require 'jabber)
@@ -28,6 +35,7 @@
 (setq jabber-alert-message-hooks
       '(jabber-message-echo    ;; put notification message to echo area
 	jabber-message-scroll  ;; ?
+	odi/twmnc-notify
 	odi/xmonad-notify))    ;; set urgendcy-flag of window-manager
 
 ;; disable presence notification about users
@@ -55,3 +63,12 @@
 (defun odi/erc-connect ()
   (interactive)
   (erc :server "irc.freenode.net" :port 6667 :nick "odi"))
+
+(defun odi/erc-start-or-switch ()
+  "Connect to ERC, or switch to last active buffer."
+  (interactive)
+  (cond
+   ((get-buffer "irc.freenode.net:6667")
+    (erc-track-switch-buffer 1))
+   (t
+    (odi/erc-connect))))
