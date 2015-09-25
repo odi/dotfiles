@@ -59,6 +59,19 @@
       '(("freenode.net" "#nixos")
 	("freenode.net" "#haskell")))
 
+
+;; add notifications to erc-modules
+(add-to-list 'erc-modules 'notifications)
+(erc-update-modules)
+
+(defun erc-notifications-notify (nick msg)
+  (odi/x-urgendcy-hint (selected-frame) t)
+  (if (< (length msg) 15)
+      (with-temp-buffer
+	(shell-command (format "twmnc -t \"IRC (%s)\" -c \"%s\"" nick msg)))
+    (with-temp-buffer
+      (shell-command (format "twmnc -t \"IRC (%s)\" -c \"%s\"" nick (concat (substring msg 0 15) " …"))))))
+
 ;; connect to freenode with username and password from ~/.authinfo
 (defun odi/erc-connect ()
   (interactive)
